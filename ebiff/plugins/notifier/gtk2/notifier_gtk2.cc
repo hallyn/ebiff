@@ -22,6 +22,8 @@
 #include "escape.h"
 #include "base64.h"
 
+#include "mime2047.h"
+
 GThread* NotifierGtk2::refresher = NULL;
 queue<NotifierGtk2::UInfo*> NotifierGtk2::requests;
 GStaticMutex NotifierGtk2::requests_mutex = G_STATIC_MUTEX_INIT;
@@ -365,75 +367,34 @@ GtkWidget* NotifierGtk2::UnicodeLabelOf(string s)
 {
 GtkWidget*lab;
 
-bool needs_encoding = false, last_was_eq = false, last_was_qm = false;
-string data_raw;
-char* data=NULL;
-string encoding;
-unsigned int i;
-int begin_encoding=-1,end_data=-1, begin_data=-1, end_encoding=-1;
-char enc = '\0';
-string before, after;
+struct mime2047_info_list l = dfa_jumper(s);
+string label_markup;
 
-for (i = 0 ; i < s.size() ; i++) {
-	char cur = s.at(i);
-	
-	if (cur == '?' && begin_data == -1 && begin_encoding !=-1 &&
-		end_encoding != -1 && end_data == -1 && ! last_was_eq && 
-		!last_was_qm)
-		begin_data = i+1;
-	if (cur == '?' && begin_encoding != -1 && end_encoding==-1 &&
-		!last_was_eq) 
-		end_encoding = i;
-
-	if ( (cur == 'b' || cur == 'B' || cur == 'q' || cur == 'q') &&
-		begin_data == -1 && begin_encoding !=-1 &&
-		end_encoding != -1 && end_data == -1)
-		enc = tolower(cur);	
-
-	if (cur == '=') last_was_eq = true;
-	if (cur == '?') last_was_qm = true;
-	if (cur == '?' && last_was_eq ) begin_encoding = i+1;
-	if (cur == '=' && last_was_qm ) end_data = i-1;
-
-	
-	if (cur != '=' && last_was_eq ) last_was_eq = false;
-	if (cur != '?' && last_was_qm ) last_was_qm = false;
+for ( int i = 0 ;  i < l.size ; i++){
+	if (l.chunks[i].encoding == 'r') {
+		label_markup += l.chunks[i].data;
+	} else if (l.chunks[i].encoding == 'b') {
+		char * data = (char*)malloc(sizeof(char) * 
+				strlen(l.chunks[i].data) / 4 * 3);
+		base64_decode(l.chunks[i].data,data);
+		label_markup += string("<span lang=\"") + 
+			string(l.chunks[i].language) +
+		 	string("\" >") + string(data) +
+			string("</span>");
+		::free(data);
+	} else if (l.chunks[i].encoding == 'q') {
+		label_markup +=	string("<span lang=\"") + 
+			string(l.chunks[i].language) +
+		 	string("\" >") + string(unquote(l.chunks[i].data)) +
+			string("</span>");
+	}
 }
 
-if ( enc != '\0' &&
-     begin_encoding != -1 &&
-     end_encoding != -1 &&
-     begin_data != -1 &&
-     end_data != -1) {
-
-	data_raw =  s.substr( begin_data, end_data - begin_data);
-	encoding = s.substr(begin_encoding, end_encoding - begin_encoding);
+free_mime2047_info_list(l);
 	
-	if (enc == 'b') {
-		data = (char*)malloc ( sizeof(char) * data_raw.size() / 4 * 3);
-		base64_decode(data_raw.c_str(),data);
-	} else
-		data = unquote(data_raw.c_str());
-	
-	before = s.substr(0,begin_encoding-2);
-	after = s.substr(end_data+2);
-
-	// we have to replace <,>
-	before = remove_gt_le(before);
-	after = remove_gt_le(after);
-
-	needs_encoding = true;
-}
-
 //render it
 lab = gtk_label_new(s.c_str());
-if (needs_encoding) {
-	gtk_label_set_markup(GTK_LABEL(lab),
-		(before + string("<span lang=\"") + encoding + 
-		 string("\" >") + 
-		 string(data) + string("</span>") + after).c_str());
-	::free(data);
-}
+gtk_label_set_markup(GTK_LABEL(lab),label_markup.c_str());
 
 return lab;
 }

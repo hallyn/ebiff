@@ -191,7 +191,6 @@ if(rc != 0)
 	fprintf(stderr,"Unable to get addr info\n");
 	close(s);
 	s = -1;
-	continue;
 	}
 
 memset(&ad, 0, sizeof(ad));
@@ -215,7 +214,6 @@ if(rc == -1)
 		strerror_r(errno, buff,100));
 	close(s);
 	s = -1;
-	continue;
 	}
 
 /* handshake */
@@ -228,7 +226,6 @@ if(rc <= 0)
 	close(s);
 	s = -1;
 	b.clear();
-	continue;
 	}
 
 int version = atoi(line);
@@ -240,7 +237,10 @@ if(version != VERSION)
 	close(s);
 	s = -1;
 	b.clear();
-	continue;
+	#warning *****************************************
+	#warning Here there USED to BE a continue... FIX!!
+	#warning the idea of a real daemon was not so stupid
+	#warning *****************************************
 	}
 	
 rc = sendl(n->pass.c_str(),n->pass.length(),s);
