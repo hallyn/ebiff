@@ -1,3 +1,10 @@
+ebiff (0.0.6) unstable; urgency=low
+
+  * fixed bug in gtk2 (insensitive label use markup too)
+  * removed useless debug printf
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun,  9 Jan 2005 12:14:28 +0100
+
 ebiff (0.0.5) unstable; urgency=low
 
   * fixed From parsing bug
