@@ -6,6 +6,8 @@
  runs contrib/checkplugins.sh to decide which plugins it should build.
  So you may hack on a this simple script to make ebiff compile your new
  plugin. The script is really simple, no explanation needed.
+ You really need lua5 to build and run ebiff. It is already debianized 
+ for you  if you use debian. If not http://www.lua.org is the source.
 
 * A new plugin *
  
