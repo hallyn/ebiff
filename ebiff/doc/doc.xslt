@@ -121,6 +121,7 @@ margin-right:0px;
 
 p {
 margin-left:10;
+margin-right:20px;
 }
 
 UL {

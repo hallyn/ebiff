@@ -12,6 +12,14 @@ ifeq ($(PREFIX),"")
 PREFIX=/usr/local/
 endif
 
+help:
+	@echo -e "Supported targets are:"
+	@echo -e "\tall"
+	@echo -e "\trelease"
+	@echo -e "\tdistclean"
+	@echo -e "\tinstall"
+	@echo -e "\tinstalldoc"
+
 all: contrib/bin2c ebiff plugins doc
 
 contrib/bin2c: contrib/bin2c.c
@@ -90,6 +98,14 @@ install: all
 	cp ebiff $(PREFIX)/bin/
 	find plugins -name \*.so -exec cp \{\} \
 		$(PREFIX)/share/ebiff/ 2>/dev/null \;
+
+installdoc:
+	mkdir -p $(PREFIX)/share/man/man1/
+	cp ebiff.1 $(PREFIX)/share/man/man1/
+	gzip $(PREFIX)/share/man/man1/ebiff.1
+	mkdir -p $(PREFIX)/share/doc/ebiff/
+	cp -r README ChangeLog samples/ $(PREFIX)/share/doc/ebiff/
+	
 
 doc: doc/manual.html
 
