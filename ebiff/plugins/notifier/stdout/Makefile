@@ -1,10 +1,10 @@
 SRC=$(shell ls *.cc)
 OBJ=$(subst .cc,.o,$(SRC))
 
-CPPFLAGS=-Wall -g3 -I. -I ../../.. -fpic $(shell xosd-config --cflags)
-CPPLDFLAGS= $(shell xosd-config --libs)
+CPPFLAGS=-Wall -g3 -I. -I ../../.. -fpic
+CPPLDFLAGS=
 
-LIB=libebiff_notifyer_xosd.so
+LIB=libebiff_notifier_stdout.so
 
 all: $(LIB)
 
@@ -12,7 +12,7 @@ clean:
 	rm -f *.o $(LIB) $(SRC:%.cc=.%.d)
 
 $(LIB):$(OBJ)
-	gcc -shared  -o $(LIB) $(OBJ) $(CPPLDFLAGS)
+	gcc -shared  -o $(LIB) $(OBJ)
 
 %.o:%.cc
 	g++ $(CPPFLAGS) -c $< 

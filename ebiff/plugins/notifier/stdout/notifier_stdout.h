@@ -15,48 +15,32 @@
 /******************************************************************************/
 
 
-#ifndef NOTIFYER_FLITE_H
-#define NOTIFYER_FLITE_H
+#ifndef NOTIFIER_STDOUT_H
+#define NOTIFIER_STDOUT_H
 
 
-#include "notifyer.h"
-#include "notifyer_exception.h"
+#include "notifier.h"
+#include "notifier_exception.h"
 
-#include <pthread.h>
-#include <math.h>
-
-#include <queue>
-#include <string>
-
-class NotifyerSox: public Notifyer
+class NotifierStdout: public Notifier
 	{
 protected:
-	static queue< string > files;
-	
-	static pthread_t manager;
-	static pthread_attr_t manager_att;
-	static pthread_mutex_t files_mutex;
-	static pthread_mutexattr_t files_mutex_att;
-	
-	static void *manager_f(void*);
-
-	string file;
-	
+	int printall;
 public:
-	void SetString(string name, string value) throw(NotifyerException);
-	void SetBool(string name, bool value) throw(NotifyerException);
-	void SetNumber(string name, double value) throw(NotifyerException);
+	void SetString(string name, string value) throw(NotifierException);
+	void SetBool(string name, bool value) throw(NotifierException);
+	void SetNumber(string name, double value) throw(NotifierException);
 		
 	void Notify(ReducedMailbox* m);
 	
-	NotifyerSox();
-	~NotifyerSox();
+	NotifierStdout();
+	~NotifierStdout();
 	};
 
 // dlopen interface
 extern "C" {
-	Notifyer* new_notifyer();
-	void delete_notifyer(Notifyer*p);
+	Notifier* new_notifier();
+	void delete_notifier(Notifier*p);
 
 }
 

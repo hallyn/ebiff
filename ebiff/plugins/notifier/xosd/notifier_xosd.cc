@@ -16,13 +16,13 @@
 
 #include <xosd.h>
 
-#include "notifyer_xosd.h"
+#include "notifier_xosd.h"
 
 /*******************************************************************************
  *
  *
  */
-void NotifyerXosd::SetString(string name, string value) throw(NotifyerException)
+void NotifierXosd::SetString(string name, string value) throw(NotifierException)
 {
 //printf("%s=%s\n",name.c_str(),value.c_str());
 if( name == "color")
@@ -52,7 +52,7 @@ if( name == "pos")
  *
  *
  */
-void NotifyerXosd::SetBool(string name, bool value) throw(NotifyerException)
+void NotifierXosd::SetBool(string name, bool value) throw(NotifierException)
 {
 
 }
@@ -60,7 +60,7 @@ void NotifyerXosd::SetBool(string name, bool value) throw(NotifyerException)
  *
  *
  */
-void NotifyerXosd::SetNumber(string name, double value) throw(NotifyerException)
+void NotifierXosd::SetNumber(string name, double value) throw(NotifierException)
 {
 	
 if( name == "hoffset")
@@ -80,7 +80,7 @@ if( name == "voffset")
  *
  *
  */
-void NotifyerXosd::Notify(ReducedMailbox* m)
+void NotifierXosd::Notify(ReducedMailbox* m)
 {
 long unsigned int n = m->CountNew();
 xosd *osd;
@@ -117,7 +117,7 @@ pthread_mutex_unlock(&display_mutex);
 
 }
 
-void *NotifyerXosd::manager_f(void*x)
+void *NotifierXosd::manager_f(void*x)
 {
 pair<queue< pair <xosd*, string > > *,pthread_mutex_t*> *p;
 p = (pair<queue< pair <xosd*, string > > *,pthread_mutex_t*> *) x;
@@ -157,7 +157,7 @@ while(true)
  *
  *
  */
-NotifyerXosd::NotifyerXosd()
+NotifierXosd::NotifierXosd()
 {
 pthread_mutexattr_init(&display_mutex_att);
 pthread_mutex_init(&display_mutex,&display_mutex_att);
@@ -173,16 +173,16 @@ manager = pthread_create(&manager,&manager_att,manager_f,
  *
  *
  */
-NotifyerXosd::~NotifyerXosd()
+NotifierXosd::~NotifierXosd()
 {
 
 }
 
-extern "C" Notifyer* new_notifyer(){
-return new NotifyerXosd();
+extern "C" Notifier* new_notifier(){
+return new NotifierXosd();
 }
 
-extern "C" void delete_notifyer(Notifyer*p){
+extern "C" void delete_notifier(Notifier*p){
 delete p;
 }
 

@@ -1,10 +1,10 @@
 SRC=$(shell ls *.cc)
 OBJ=$(subst .cc,.o,$(SRC))
 
-CPPFLAGS=-Wall -g3 -I. -I ../../.. -fpic $(shell pkg-config --cflags gtk+-2.0)
-CPPLDFLAGS= $(shell pkg-config --libs gtk+-2.0 gthread-2.0)
+CPPFLAGS=-Wall -g3 -I. -I ../../.. -fpic $(shell xosd-config --cflags)
+CPPLDFLAGS= $(shell xosd-config --libs)
 
-LIB=libebiff_notifyer_gtk2.so
+LIB=libebiff_notifier_xosd.so
 
 all: $(LIB)
 

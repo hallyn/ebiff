@@ -16,20 +16,20 @@
 
 #include <iostream>
 
-#include "notifyer_stdout.h"
+#include "notifier_stdout.h"
 
 /*******************************************************************************
  *
  *
  */
-void NotifyerStdout::SetString(string name, string value) throw(NotifyerException)
+void NotifierStdout::SetString(string name, string value) throw(NotifierException)
 {
 }
 /*******************************************************************************
  *
  *
  */
-void NotifyerStdout::SetBool(string name, bool value) throw(NotifyerException)
+void NotifierStdout::SetBool(string name, bool value) throw(NotifierException)
 {
 if( name == "printall")
 	printall = value;
@@ -39,7 +39,7 @@ if( name == "printall")
  *
  *
  */
-void NotifyerStdout::SetNumber(string name, double value) throw(NotifyerException)
+void NotifierStdout::SetNumber(string name, double value) throw(NotifierException)
 {
 
 }
@@ -48,7 +48,7 @@ void NotifyerStdout::SetNumber(string name, double value) throw(NotifyerExceptio
  *
  *
  */
-void NotifyerStdout::Notify(ReducedMailbox* m)
+void NotifierStdout::Notify(ReducedMailbox* m)
 {
 long unsigned int n = m->CountNew();
 
@@ -69,7 +69,7 @@ if(printall != 0)
  *
  *
  */
-NotifyerStdout::NotifyerStdout()
+NotifierStdout::NotifierStdout()
 {
 printall = 0;
 }
@@ -78,16 +78,16 @@ printall = 0;
  *
  *
  */
-NotifyerStdout::~NotifyerStdout()
+NotifierStdout::~NotifierStdout()
 {
 
 }
 
-extern "C" Notifyer* new_notifyer(){
-return new NotifyerStdout();
+extern "C" Notifier* new_notifier(){
+return new NotifierStdout();
 }
 
-extern "C" void delete_notifyer(Notifyer*p){
+extern "C" void delete_notifier(Notifier*p){
 delete p;
 }
 
