@@ -6,8 +6,10 @@
   TT {font-size:14pt;font-family:courier;}
   I {font-size:14pt;font-family:helvetica;}
   PRE {font-size:13pt;font-family:courier;
-  	border-style:solid;border-size:1;border-color:grey;
-	margin:10 10 10 10;padding:10 10 10 10;}
+  	border-style:solid;border-width:1px;
+	margin:10 10 10 10;padding:10 10 10 10;
+	border-color:#d8ca00;
+	background-color:#fffdcf;}
   body { 
 background-color: #fcfcfc;
 font-family: helvetica,sans-serif;
@@ -22,9 +24,17 @@ p {margin-left:10;}
 
   UL {list-style-type:disc;}
   UL UL {list-style-type:square;}
-  UL UL UL {list-style-type:disc;}
-  UL UL UL UL {list-style-type:square;}
-  UL UL UL UL UL {list-style-type:disc;}
+  UL UL UL {list-style-type:disc;
+border-style:none none none solid;
+border-width:1px;
+border-color:#9b30cf;
+background-color:#fddfff;}
+  UL UL UL UL {list-style-type:square;border-style:none;}
+  UL UL UL UL UL {list-style-type:disc;
+border-style:none none none solid;
+border-width:1px;
+border-color:#d8ca00;
+background-color:#fffabf;}
   H1 {font-size: 24pt;
 color:#dfdff0;
 text-align:center;
