@@ -13,6 +13,8 @@
  * 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
  ******************************************************************************/
 
+#include <unistd.h>
+#include <stdio.h>
 
 #include "notifier_sox.h"
 

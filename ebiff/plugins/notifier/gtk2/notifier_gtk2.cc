@@ -15,6 +15,7 @@
 
 
 #include <iostream>
+#include <stdio.h>
 
 #include "notifier_gtk2.h"
 
