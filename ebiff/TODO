@@ -1,13 +1,8 @@
-- solve sdlaudio queue
 - better gtk preview window dimension
-- debianize
 - better locking system for mbox (see mutt sources)
 - write a README
 - check license of the fat penguin for a SDLvideo plugin
 - write a Changelog
-- sf account
-- CVS
 - build system
 -------------
-- faster gtk2 plugin generation of windows (no rebuild everithing from scratch)
  
