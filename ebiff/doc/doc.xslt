@@ -126,10 +126,12 @@ margin-right:20px;
 
 UL {
 list-style-type:disc;
+margin-right:20px;
 }
 
 UL UL {
 list-style-type:square;
+margin-right:20px;
 }
 
 UL UL UL {
@@ -138,11 +140,13 @@ border-style:none none none solid;
 border-width:1px;
 border-color:#9b30cf;
 background-color:#fddfff;
+margin-right:20px;
 }
 
 UL UL UL UL {
 list-style-type:square;
 border-style:none;
+margin-right:20px;
 }
 
 UL UL UL UL UL {
@@ -151,6 +155,7 @@ border-style:none none none solid;
 border-width:1px;
 border-color:#d8ca00;
 background-color:#fffabf;
+margin-right:20px;
 }
 
 H1 {
@@ -164,7 +169,7 @@ background-color:#2f2fc0;
 margin-left:0px;
 margin-right:0px;
 margin-top:0px;
-}
+margin-right:20px;}
 
 H2 {
 font-size: 18pt;
