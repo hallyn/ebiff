@@ -350,8 +350,10 @@ function selectmailbox(t,name)
 		if m.name == name then
 			return m
 		end
+		--print("failed "..name.." with "..m.name)
 	end
 
+	error("Unable to find mailbox "..name)
 	return nil
 end
 

@@ -32,7 +32,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
+	$(MAKE) all
 	#/usr/bin/docbook-to-man debian/ebiff.sgml > ebiff.1
 
 	touch build-stamp

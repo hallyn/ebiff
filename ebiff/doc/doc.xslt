@@ -170,9 +170,10 @@ margin-top:0px;
 }
 
 H2 {
-font-size: 18pt;
+font-size: 16pt;
 color:#2f2fc0;
 text-align:left;
+font-weight:normal;
 background-color:#dfdff0;
 margin-left:10px;
 width:30%;
@@ -425,7 +426,7 @@ non alphanumeric characters:
 			You can easily write an always-up-to-date config
 			file making an authomatic search of 
 			directories. For example
-			<PRE>mailboxes=find_mabox(os.getenv("HOME").."/Mail")</PRE>
+			<PRE>mailboxes=find_mbox(os.getenv("HOME").."/Mail")</PRE>
 			finds the mboxes that are inside <TT>~/Mail/</TT>,
 			and puts the list of theyr path in <TT>mailboxes</TT>.
 			Remember that is up to you to specify a directory 
