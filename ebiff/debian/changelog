@@ -1,3 +1,9 @@
+ebiff (0.0.5) unstable; urgency=low
+
+  * fixed From parsing bug
+
+ -- Enrico Tassi <tassi@garfield>  Thu, 23 Dec 2004 12:13:09 +0100
+
 ebiff (0.0.4) unstable; urgency=low
 
   * gtk2 emproved

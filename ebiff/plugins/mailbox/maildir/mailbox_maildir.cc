@@ -403,13 +403,13 @@ do
 		if (p[0].rm_so /*!= -1*/ == 0)
 			{
 			unsigned int len = strlen(line);
-			printf("Eccola FROM: %s\n",line);
+			//printf("Eccola FROM: %s\n",line);
 			if (line[len-1] == '\n')
 				line[len-- -1] = '\0';
 			if (line[len-1] == '\r')
 				line[len-- -1] = '\0';
 			
-			printf("Eccola FROM2: %s\n",&line[p[0].rm_eo]);
+			//printf("Eccola FROM2: %s\n",&line[p[0].rm_eo]);
 			from = string(&line[p[0].rm_eo]);
 			found_f = true;
 			}

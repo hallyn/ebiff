@@ -61,7 +61,7 @@ Package: ebiff-notifier-wm
 Architecture: any
 Depends: ${shlibs:Depends}, ebiff
 Provides: ebiff-notifier
-Description: ebiff's utmp notifier
+Description: ebiff's WindowMaker notifier
  This plugin provides a dockable app for WindowMaker
 
 Package: ebiff-mailbox-mbox

@@ -23,6 +23,6 @@
 #define SO_STD		"/usr/share/ebiff/"
 //#define SO_STD		"./"
 #define SO_DEVEL	"./"
-#define VERSION		"0.0.4"
+#define VERSION		"0.0.5"
 
 #endif

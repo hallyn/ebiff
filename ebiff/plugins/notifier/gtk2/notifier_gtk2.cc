@@ -626,11 +626,8 @@ Box* x = i->mailbox;
 // create the button
 GtkWidget*b = gtk_button_new();
 GtkWidget*lbl = gtk_label_new(x->name.c_str());
-if(x->content.size() > 0 )
-	gtk_label_set_markup(GTK_LABEL(lbl),
-		(string("<span ") + sname + string(" >") + 
-		 x->name + 
-		 string("</span>")).c_str());
+gtk_label_set_markup(GTK_LABEL(lbl),(string("<span ") + sname + string(" >") + 
+		 x->name + string("</span>")).c_str());
 
 gtk_widget_show(lbl);
 gtk_container_add(GTK_CONTAINER(b),lbl);
