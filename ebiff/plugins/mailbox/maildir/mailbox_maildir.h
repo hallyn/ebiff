@@ -30,6 +30,7 @@ using namespace std;
 class MailboxMaildir: public Mailbox 
 	{
 protected:
+	void Reset();
 	
 	void UpdateTimestamps() throw(MailboxException);
 	void UpdateCounters() throw(MailboxException);

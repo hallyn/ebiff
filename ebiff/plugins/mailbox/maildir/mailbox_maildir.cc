@@ -39,13 +39,18 @@
  *
  *
  */ 
-MailboxMaildir::MailboxMaildir() throw()
-{
+
+void MailboxMaildir::Reset() {
 last_modify_new = 0;
 last_modify_old = 0;
 path = "";
 n_new = 0;
 mails = vector<MailInfo>(0);
+}
+					
+MailboxMaildir::MailboxMaildir() throw()
+{
+Reset();
 
 regcomp(&from_ex,"^From: *",REG_ICASE|REG_EXTENDED);
 regcomp(&subject_ex,"^Subject:",REG_ICASE|REG_EXTENDED);
@@ -262,8 +267,11 @@ while( (e = readdir(d)) != NULL )
 	}
 closedir(d);
 
-if(i != n_new)
-	throw MailboxException("Internal error in sync: i=");
+if(i != n_new) {
+	Reset();
+	Sync(); //FIXME may diverge!
+	//THROW(MailboxException("MailboxMaildir::Sync internal error"));
+}
 
 
 }
