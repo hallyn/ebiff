@@ -64,6 +64,14 @@ Provides: ebiff-notifier
 Description: ebiff's WindowMaker notifier
  This plugin provides a dockable app for WindowMaker
 
+Package: ebiff-notifier-netout
+Architecture: any
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's network notifier
+ This plugin provides network transparent notification
+
+
 Package: ebiff-mailbox-mbox
 Architecture: any
 Depends: ${shlibs:Depends}, ebiff
@@ -77,4 +85,12 @@ Depends: ${shlibs:Depends}, ebiff
 Provides: ebiff-mailbox
 Description: ebiff's maildir plugin
  This plugin allows ebiff to access maildir mailboxes
+
+Package: ebiff-mailbox-netin
+Architecture: any
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-mailbox
+Description: ebiff's network mailbox plugin
+ This plugin allows ebiff to access network mailboxes (created by the 
+ ebiff-notifier-netout plugin)
 
