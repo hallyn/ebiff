@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PLUGINS="stdout utmp"
+PLUGINS="stdout utmp netout"
 
 echo "Checking for plugins libraryes:"
 echo

@@ -121,7 +121,7 @@ mailbox_must	= {"type","driver","id"}
 mailbox_default = {name="-no-name-",command="/bin/true",interval=10}
 mailbox_allowed = {
 	type=onestrof("mailbox"),
-	driver=onetblof("maildir","mbox"),
+	driver=onetblof("maildir","mbox","netin"),
 	interval=onenumof(1,3600)}
 mailbox_comment={
 	id="Forget this, it is automatically added by new()",
@@ -141,6 +141,16 @@ mailbox_comment={
 		path="You should know this :)",
 		type="Maildir type mailbox, usually ~/Mail/ is a maildir"}
 	-- ------------------------------------------------------------------ --
+	-- mailbox::maildir definitions
+	--
+	netin_types = {type="string",host="string",port="number",pass="string"}
+	netin_must = {"type","host","pass"}
+	netin_default = {port=6758}
+	netin_allowed = {type=onestrof("netin"),port=onenumof(1,65535)}
+	netin_comment={
+		type="Net"}
+	
+	-- ------------------------------------------------------------------ --
 	-- mailbox::mbox definitions
 	--
 	mbox_types = {type="string",path="string",newonly="boolean"}
@@ -159,7 +169,7 @@ notifier_must = {"type","driver","id"}
 notifier_default = {}
 notifier_allowed = {
 	type=onestrof("notifier"),
-	driver=onetblof("stdout","gtk2","xosd","flite","sox","utmp")}
+	driver=onetblof("stdout","gtk2","xosd","flite","sox","utmp","netout")}
 notifier_comment={
 	id="Forget this, it is automatically added by new()",
 	type="A way to notify the user"
@@ -175,6 +185,17 @@ notifier_comment={
 		printall="Print From and Subject info of mails",
 		type="Simple print on stdout"
 		}
+	-- ------------------------------------------------------------------ --
+	-- notifier::stdout definitions
+	--
+	netout_types = { type="string"}
+	netout_must = {"type"}
+	netout_default = {}
+	netout_allowed = {type=onestrof("netout")}
+	netout_comment={
+		type="Network forward"
+		}
+		
 	-- ------------------------------------------------------------------ --
 	-- notifier::utmp definitions
 	--

@@ -125,6 +125,17 @@ while (lua_next(L,-2) != 0)
 				m->SetString("path",MAILDIR_CAST(&b).path);
 				
 				}break;
+			case MAILBOX_DRIVER_CONTENT_NETIN: {
+				m = PluginRegistry::
+					mailbox_plugin_new("netin");
+				if(m==NULL)
+					break;
+				
+				m->SetString("host",NETIN_CAST(&b).host);
+				m->SetString("pass",NETIN_CAST(&b).pass);
+				m->SetNumber("port",NETIN_CAST(&b).port);
+				
+				}break;				     
 			case MAILBOX_DRIVER_CONTENT_MBOX:{
 				m = PluginRegistry::
 					mailbox_plugin_new("mbox");
@@ -172,6 +183,12 @@ while (lua_next(L,-2) != 0)
 				n->SetBool("printall",UTMP_CAST(&b).printall);
 				
 				}break;
+			case NOTIFIER_DRIVER_CONTENT_NETOUT: {
+				n=PluginRegistry::notifier_plugin_new("netout");
+				if(n==NULL)
+					break;
+
+				}break;		
 			case NOTIFIER_DRIVER_CONTENT_SOX: {
 				n=PluginRegistry::
 					notifier_plugin_new("sox");

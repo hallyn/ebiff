@@ -64,6 +64,7 @@ int Action::result() {return 0;}
 
 static struct option opts[] = { 
 	{ "version" , no_argument , NULL , 'V'},
+	{ "file" , required_argument , NULL , 'f'},
 	{ NULL, 0, NULL, 0 } };
 
 static void usage(const char *progname) {
@@ -73,13 +74,21 @@ static void usage(const char *progname) {
 int main(int argc, char *argv[])
 {
 int res;
-while ((res=getopt_long(argc,argv,"V",opts,NULL))!= -1) 
+
+char* file = NULL;
+
+while ((res=getopt_long(argc,argv,"Vf:",opts,NULL))!= -1) 
 	{
 	if (res == 'V') 
 		{
 		fprintf(stdout,"\nebiff version %s\n\n",VERSION);
 		exit(0);
 		}
+	if (res == 'f') 
+		{
+		file = strdup(optarg);
+		}
+
 	else 
 		{
 		usage(argv[0]);
@@ -90,10 +99,14 @@ while ((res=getopt_long(argc,argv,"V",opts,NULL))!= -1)
 // check for the config file
 const char* home = getenv("HOME");
 char path[255];
-snprintf(path,255,"%s/%s",home,CFG_STD);
+if(file != NULL)
+	snprintf(path,255,"%s",file);
+else
+	snprintf(path,255,"%s/%s",home,CFG_STD);
+
 FILE* f = fopen(path,"r");
 
-if(f == NULL)
+if(f == NULL && file == NULL)
 	{
 	fprintf(stderr,"Failed %s, trying the DEVEL path %s\n",path,CFG_DEVEL);
 	snprintf(path,255,"%s",CFG_DEVEL);
