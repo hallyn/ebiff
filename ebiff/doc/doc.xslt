@@ -165,6 +165,15 @@ margin-right:0px;
 margin-top:0px;
 }
 
+H2 {
+font-size: 18pt;
+color:#2f2fc0;
+text-align:left;
+background-color:#dfdff0;
+margin-left:10px;
+width:30%;
+}
+
 A  {
 color:DarkViolet;
 text-decoration: none;
@@ -239,14 +248,30 @@ margin-left:20px;
       <xsl:if test="position() &lt; last() ">, </xsl:if>
     </xsl:for-each>.
     <BR/>
+    Sections:
+    </P>
+    <OL>
+    	<LI><A HREF="#intro">Introduction</A></LI>
+	<LI><A HREF="#simple">Simple example</A></LI>
+	<LI><A HREF="#lua">Some on LUA</A></LI>
+	<LI><A HREF="#plugins">The plugins options</A></LI>
+	<LI><A HREF="#functions">functions.lua</A></LI>
+	<LI><A HREF="#complex">Complex example</A></LI>
+    </OL>
+    <H2 ID="intro">Introduction</H2>
+    <P>
     The function call <TT>bind(mailbox,notifier)</TT>
     creates a new <B>relation</B> , and adds it to the relation 
     list used by ebiff.<BR/>
     An alternative way of calling <B>bind</B> is to pass a mailbox list or
     a notifier list instead of a single element. The right syntax to do this 
     is <TT>bind({box1,box2,..,boxn},{not1,not2,...,notm})</TT>.<BR/>
-    This is a short example of a configuration file (a longer and more complex
-    example is in <TT>/usr/share/doc/ebiff/</TT> in the debian system):
+    </P>
+    
+    <H2 ID="simple">Simple example</H2>
+    <P>
+    This is a short example of a configuration file (longer and more complex
+    examples are in <TT>/usr/share/doc/ebiff/samples/</TT> in the debian system):
     </P>
 <pre>
 --
@@ -290,7 +315,10 @@ bind(b_inbox,{n_gtk2,n_osd})
     In the example the mailbox <TT>b_inbox</TT> will be inspected every 
     10 seconds and eventually both <TT>n_gtk2</TT> and <TT>n_osd</TT>
     will be used to notify the user.<BR/>
-    Rememeber that comments starts with <TT>--</TT>, strings can be queted with
+    </P>
+    <H2 ID="lua">Some on LUA</H2>
+    <P>
+    Comments starts with <TT>--</TT>, strings can be queted with
     single <TT>'</TT> or double <TT>"</TT> quotes, boolean values are 
     <TT>true</TT> and <TT>false</TT>. The syntax and 
     functionalities you can use are really more than these, since 
@@ -338,16 +366,20 @@ non alphanumeric characters:
 </LI>
 </UL>
   <P>
-    The last important thing you must know is tgat you must use the 
+    The last important thing you must know is that you must use the 
     <TT>new</TT> function (ok, in the example it has no <TT>()</TT>, but
     it is automatically understood by LUA) to create a new mailbox or notifier
     instance (calling new also adds the <TT>id</TT> field, this is why it is a
     required field but not used in the sample configuration).<BR/>
+    </P>
+    <H2 ID="plugins">The plugins options</H2>
+    <P>
     A <B>relation</B> has the following fields (notice that the tables 
     <B>mailbox</B> and <B>notifier</B> that must be passed to <TT>bind</TT>
     are subtables of <B>relation</B> and theys fields are listed here):
     <xsl:apply-templates select="relation"/>
     </P>
+   <H2 ID="functions">functions.lua</H2>
    <P>
    In the samples/ directory there are some usefull example of configuration
    files, and a support file you can cut&amp;paste in your configuration file
@@ -405,21 +437,30 @@ non alphanumeric characters:
 	<LI>
 	Creation functions:
 	<DL>
-		<DT>maildir2mailbox(s,transtbl,cmdgen,interval)</DT>
-		<DD>
-		
-		</DD>
 		<DT>maildirs2mailboxes(t,transtbl,cmdgen,interval)</DT>
 		<DD>
-		
-		</DD>
-		<DT>mbox2mailbox(s,newonly,transtbl,cmdgen,interval)</DT>
-		<DD>
-		
+		This function takes a list of paths <TT>t</TT> (maybe created
+		with one of the <TT>find_*</TT> functions) a translation table
+		<TT>transtbl</TT>, a command generation function 
+		<TT>cmdgen</TT> and an <TT>interval</TT> and returns a list
+		of mailboxes using the maildir driver.
+		<TT>transtbl</TT> is a map between names. Normally the 
+		name used to create the mailbox is the basename of the 
+		mailbox path. I use 
+	<PRE>{["securityfocus"] = "secfoc", ["sent-mail"] = "sent" }</PRE>
+		<TT>cmdgen</TT> is a command generator function, I use
+	<PRE>function(s) return "xterm -e mutt -f "..s.."&amp;" end</PRE>
+		<TT>interval</TT> is the parameter used for creating all 
+		the mailboxes, and has the same meaning of the omonimous 
+		paramenter for a mailbox table.
+
 		</DD>
 		<DT>mboxes2mailboxes(t,transtbl,cmdgen,newonly,interval)</DT>
 		<DD>
-		
+		This function works as the previous one, but returns a list of
+		mailboxes using the mbox driver. The parameter <TT>newonly</TT>
+		has the same meaning of the omonimous 
+		paramenter for a mbox table.
 		</DD>
 	</DL>
 
@@ -429,14 +470,72 @@ non alphanumeric characters:
 	<DL>
 		<DT>selectmailbox(t,name)</DT>
 		<DD>
-
+		This function takes a list of mailboex and returns the mailbox
+		having the <TT>name</TT> name.
 		</DD>
 	</DL>
 
 	</LI>
 
    </UL>
+   <H2 ID="complex">Complex example</H2>
+   <P>
+   This is a more complex example of an auto-updating configuration file that
+   uses the prevoius functions:</P><PRE>
+-- create a notifier
+xosd = new {
+	type="notifier";
+	driver={
+		type="xosd";
+		outlineoffset=0;
+		shoadowoffset=3;
+		color="#00FF00";
+		timeout=6;
+		align="right";
+		pos="bottom";
+		voffset=100;
+		};
+
+-- create anothe notifier
+sox = new {
+	type="notifier";
+	driver={
+		type="sox";
+		file="/usr/share/licq/sounds/fun/Online.wav";
+		};
+}
+		
+-- get the list of maildirs in ~/Mail
+-- os.getenv(name) has the meaning of the omonimous getenv function
+-- .. is the string concatenation operator
+boxes = find_maildir( os.getenv("HOME") .. "/Mail" )
+
+-- create the name map
+map = {	
+	["securityfocus"] = "secfoc", 
+	["sent-mail"] = "sent",
+	["sourceforge"] = "sf.net",
+	["lp-forum"] = "lp-frm"
+}
+
+-- create the command generator
+cmd = function(s) 
+	return "xterm -e mutt -f "..s.."&amp;" 
+end
+
+-- create a list of mailboxes based on boxes
+mailboxes = maildirs2mailboxes(boxes,map,cmd,10)
+
+-- bind all togheter
+bind(mailboxes,xosd)
+
+-- bind some mailboex to the sox notifier
+bind(selectmailbox(mailboxes,"sf.net"),sox)
+bind(selectmailbox(mailboxes,"friends"),sox)</PRE>
     <HR/>
+    <div style="text-align:right;">
+    <TT>$Id$</TT>
+    </div>
     </body>
   </html>
 </xsl:template>
