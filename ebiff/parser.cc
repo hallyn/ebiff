@@ -153,6 +153,14 @@ while (lua_next(L,-2) != 0)
 				n->SetBool("printall",STDOUT_CAST(&b).printall);
 				
 				}break;
+			case NOTIFIER_DRIVER_CONTENT_UTMP: {
+				n=PluginRegistry::notifier_plugin_new("utmp");
+				if(n==NULL)
+					break;
+
+				n->SetBool("printall",UTMP_CAST(&b).printall);
+				
+				}break;
 			case NOTIFIER_DRIVER_CONTENT_SOX: {
 				n=PluginRegistry::
 					notifier_plugin_new("sox");

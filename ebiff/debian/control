@@ -49,6 +49,14 @@ Provides: ebiff-notifier
 Description: ebiff's stdout notifier
  This plugin prints a simple message on stdout, not really interesting
 
+Package: ebiff-notifier-utmp
+Architecture: any
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's utmp notifier
+ This plugin broadcast-prints a simple message on every terminal owned by 
+ the user, like xterms or consoles.
+
 Package: ebiff-mailbox-mbox
 Architecture: any
 Depends: ${shlibs:Depends}, ebiff

@@ -159,7 +159,7 @@ notifier_must = {"type","driver","id"}
 notifier_default = {}
 notifier_allowed = {
 	type=onestrof("notifier"),
-	driver=onetblof("stdout","gtk2","xosd","flite","sox")}
+	driver=onetblof("stdout","gtk2","xosd","flite","sox","utmp")}
 notifier_comment={
 	id="Forget this, it is automatically added by new()",
 	type="A way to notify the user"
@@ -175,6 +175,18 @@ notifier_comment={
 		printall="Print From and Subject info of mails",
 		type="Simple print on stdout"
 		}
+	-- ------------------------------------------------------------------ --
+	-- notifier::utmp definitions
+	--
+	utmp_types = { type="string",printall="boolean"}
+	utmp_must = {"type"}
+	utmp_default = {printall=false}
+	utmp_allowed = {type=onestrof("utmp")}
+	utmp_comment={
+		printall="Print From and Subject info of mails",
+		type="Simple broadcast-print on all users utmp-registered terminals (normal tty or pts (xterm) are ok)"
+		}
+	
 	-- ------------------------------------------------------------------ --
 	-- notifier::sox definitions
 	--
