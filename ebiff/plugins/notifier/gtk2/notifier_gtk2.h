@@ -52,6 +52,9 @@ protected:
 		string position;
 		bool showall;
 		bool preview;
+		string spannumber;
+		string spanname;
+
 		};
 
 	// the data structure passed to the thread to represent mailbox status
@@ -88,8 +91,11 @@ protected:
 		string position;
 		bool showall;
 		bool preview;
+		string spannumber;
+		string spanname;
 
-		UInfo(Box*,Status::BoxInfo&,GtkWidget *,string,bool,bool);
+		UInfo(Box*,Status::BoxInfo&,GtkWidget *,
+				string,bool,bool,string,string);
 		~UInfo();
 	};
 	

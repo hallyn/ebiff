@@ -89,17 +89,17 @@ is required</xsl:if></xsl:template>
   <style type="text/css">
 
 TT {
-font-size:14pt;
+font-size:12pt;
 font-family:courier;
 }
 
 I {
-font-size:14pt;
+font-size:12pt;
 font-family:helvetica;
 }
 
 PRE {
-font-size:13pt;
+font-size:11pt;
 font-family:courier;
 border-style:solid;
 border-width:1px;
@@ -112,7 +112,7 @@ background-color:#fffdcf;
 body { 
 background-color: #fcfcfc;
 font-family: helvetica,sans-serif;
-font-size:15pt;
+font-size:13pt;
 margin-top:0px;
 margin-bottom:0px;
 margin-left:0px;
@@ -157,7 +157,7 @@ margin-right:20px;
 }
 
 H1 {
-font-size: 24pt;
+font-size: 22pt;
 color:#dfdff0;
 text-align:center;
 border-style:solid;
@@ -170,7 +170,7 @@ margin-top:0px;
 }
 
 H2 {
-font-size: 16pt;
+font-size: 14pt;
 color:#2f2fc0;
 text-align:left;
 font-weight:normal;
@@ -180,7 +180,7 @@ width:30%;
 }
 
 H3 {
-font-size: 16pt;
+font-size: 14pt;
 color:#2f2fc0;
 text-align:left;
 font-weight:normal;
@@ -228,7 +228,7 @@ margin-right:20px;
 
 UL DL DT {
 font-family:courier,fixed;
-font-size:14pt;
+font-size:12pt;
 font-weight:bold;
 margin-left:20px;
 }

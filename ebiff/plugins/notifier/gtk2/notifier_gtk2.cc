@@ -34,6 +34,10 @@ void NotifierGtk2::SetString(string name, string value) throw(NotifierException)
 {
 if( name == string("position"))
 	status.position = value;
+if( name == string("spannumber"))
+	status.spannumber = value;
+if( name == string("spanname"))
+	status.spanname = value;
 }
 /*******************************************************************************
  *
@@ -91,6 +95,8 @@ gtk_init_check(&argn,&argv);
 status.window = NULL;
 status.showall = false;
 status.preview = false;
+status.spannumber="";
+status.spanname="";
 if(refresher == NULL)
 	{
 	if (!g_thread_supported ()) 
@@ -123,7 +129,9 @@ UInfo* i = new UInfo(
 	status.window,
 	status.position,
 	status.showall,
-	status.preview);
+	status.preview,
+	status.spannumber,
+	status.spanname);
 
 return i;
 }
@@ -158,7 +166,7 @@ position = -1;
  *
  */
 NotifierGtk2::UInfo::UInfo(Box*a,Status::BoxInfo &b,
-	GtkWidget *c,string d,bool e,bool f):
+	GtkWidget *c,string d,bool e,bool f,string num,string nam):
 info(b)
 {
 mailbox = a;
@@ -166,6 +174,8 @@ window = c;
 position = d;
 showall = e;
 preview = f;
+spannumber = num;
+spanname = nam;
 }
 
 /*******************************************************************************
@@ -330,18 +340,32 @@ GtkWidget* NotifierGtk2::CreatePreview(UInfo*i,NotifierGtk2::Box *x)
 {
 GtkWidget* ret;
 char str[5];
+string snumber = i->spannumber;
+string label;
 
 snprintf(str,5,"%u",x->content.size());
 	
-if (!i->preview)
-	ret = gtk_label_new(str);
-else
-	{
+label = string(str);
+
+if (!i->preview){
+	ret = gtk_label_new(label.c_str());
+	gtk_label_set_markup(GTK_LABEL(ret),
+		(string("<span ") + snumber + string(" >") + 
+		 string(str) + string("</span>")).c_str());
+
+} else {
 	GtkWidget* w1,*l1,*l2,*l3,*tbl,*s1,*s2,*s3,*scrolledwindow1,*viewport1;
 	unsigned long int J=x->content.size();
 	unsigned long int j=2;
+	GtkWidget *lab;
 
-	ret = gtk_toggle_button_new_with_label(str);
+	lab = gtk_label_new(label.c_str());
+	gtk_label_set_markup(GTK_LABEL(lab),
+		(string("<span ") + snumber + string(" >") + 
+		 string(str) + string("</span>")).c_str());
+	ret = gtk_toggle_button_new();
+	gtk_container_add(GTK_CONTAINER(ret),lab);
+	gtk_widget_show(lab);
 	
 	w1 = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position(GTK_WINDOW(w1),GTK_WIN_POS_CENTER_ALWAYS);
@@ -510,6 +534,7 @@ int size = 0;
 int j;
 GtkWidget* t = NULL,*w = i->window;
 GList* l = NULL;
+string sname;
 
 // if t exists -> size != 0.. read it!
 l = gtk_container_get_children(GTK_CONTAINER(w));
@@ -556,7 +581,7 @@ else
 		}
 	}
 
-// set the position to the last one, or recall the sved one and 
+// set the position to the last one, or recall the saved one and 
 // remove old widgets
 if( i->info.position == -1 )
 	i->info.position = size; // this passes it back! shit c++ 
@@ -594,6 +619,7 @@ else
 
 // j means the position of the widget that will be attached
 j = i->info.position;
+sname = i->spanname;
 
 Box* x = i->mailbox;
 
@@ -602,9 +628,7 @@ GtkWidget*b = gtk_button_new();
 GtkWidget*lbl = gtk_label_new(x->name.c_str());
 if(x->content.size() > 0 )
 	gtk_label_set_markup(GTK_LABEL(lbl),
-		(string("<span foreground='blue'"
-			" weight='ultrabold'"
-			" stretch='condensed'>") + 
+		(string("<span ") + sname + string(" >") + 
 		 x->name + 
 		 string("</span>")).c_str());
 

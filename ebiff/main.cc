@@ -69,6 +69,7 @@ static struct option opts[] = {
 
 static void usage(const char *progname) {
 	fprintf(stderr, "Usage:  %s\t[-V|--version] \n", progname);
+	fprintf(stderr, "Usage:  %s\t[-f|--file configfile]\n", progname);
 }
 
 int main(int argc, char *argv[])

@@ -219,6 +219,10 @@ while (lua_next(L,-2) != 0)
 					break;
 
 				n->SetString("position",GTK2_CAST(&b).position);
+				n->SetString("spannumber",
+					GTK2_CAST(&b).spannumber);
+				n->SetString("spanname",
+					GTK2_CAST(&b).spanname);
 				n->SetBool("showall",GTK2_CAST(&b).showall);
 				n->SetBool("preview",GTK2_CAST(&b).preview);
 				

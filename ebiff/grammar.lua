@@ -251,9 +251,16 @@ notifier_comment={
 	gtk2_types = { type="string",
 		position="string",
 		showall="boolean",
-		preview="boolean"}
+		preview="boolean",
+		spannumber="string",
+		spanname="string"}
 	gtk2_must = {"type"}
-	gtk2_default = {position="topleft",showall=true,preview=true}
+	gtk2_default = {
+		position="topleft",
+		showall=true,
+		preview=true,
+		spannumber="",
+		spanname='weight="bold" color="#0000FF"'}
 	gtk2_allowed = {type=onestrof("gtk2"),
 		position=onestrof("managed","top","bottom","left","right",
 			"topleft","topright","bottomleft","bottomright")}
@@ -261,6 +268,8 @@ notifier_comment={
 		position="Where to put the window",
 		showall="Not hide the empty boxes",
 		preview="Show a button to show the mailbox preview",
+		spannumber="The pango markup attributes for the number label. See http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html for a summary. Attributes are putted in a &lt;span&gt; tag",
+		spanname='As spannumber, but for the mailbox name',
 		type="Gbuffy like plugin"}
 	-- ------------------------------------------------------------------ --
 	-- notifier::xosd definitions
@@ -315,7 +324,7 @@ notifier_comment={
 	--
 	wm_types = { type="string",command="string" }
 	wm_must = {"type"}
-	wm_default = {command=""}
+	wm_default = {command="xterm -e mutt"}
 	wm_allowed = {type=onestrof("wm")}
 	wm_comment={
 		command="The shell command to be executed when clicked"
