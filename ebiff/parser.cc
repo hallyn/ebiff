@@ -198,6 +198,7 @@ while (lua_next(L,-2) != 0)
 					break;
 
 				n->SetString("file",SOX_CAST(&b).file);
+				n->SetString("player",SOX_CAST(&b).player);
 				n->SetString("file_empty",
 					SOX_CAST(&b).file_empty);
 				

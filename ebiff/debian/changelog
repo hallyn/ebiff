@@ -1,3 +1,9 @@
+ebiff (0.0.3) unstable; urgency=low
+
+  * sox -> esdplay 
+
+ -- Enrico Tassi <tassi@garfield>  Mon, 25 Oct 2004 10:59:52 +0200
+
 ebiff (0.0.2) unstable; urgency=low
 
   *  ??

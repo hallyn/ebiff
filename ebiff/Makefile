@@ -110,7 +110,7 @@ installdoc:
 doc: doc/manual.html
 
 doc/manual.html : grammar.lua doc/doc.lua tableex.lua doc/doc.xslt
-	lua -l doc/doc.lua -l grammar.lua -l tableex.lua \
+	cat doc/doc.lua grammar.lua tableex.lua | lua - \
 		-e "print(generate_doc(\"relation\",\"\"))" |\
 		tee doc/doc.xml | xsltproc doc/doc.xslt - > doc/manual.html
 
@@ -126,7 +126,7 @@ doc/manual.html : grammar.lua doc/doc.lua tableex.lua doc/doc.xslt
 	g++ -MM $(CPPFLAGS) $< > $@
 
 parser.c:parser.lua grammar.lua tableex.lua
-	lua -l parser.lua -l grammar.lua -l tableex.lua \
+	cat parser.lua grammar.lua tableex.lua | lua - \
 		-e "print(generate_parser(\"relation\"))" > parser.c
 
 %.c:%.lua contrib/bin2c

@@ -217,13 +217,15 @@ notifier_comment={
 	-- ------------------------------------------------------------------ --
 	-- notifier::sox definitions
 	--
-	sox_types = { type="string",file="string",file_empty="string"}
+	sox_types = { type="string",file="string",
+		file_empty="string",player="string"}
 	sox_must = {"type","file"}
-	sox_default = {file_empty=""}
+	sox_default = {file_empty="",player="/usr/bin/sox"}
 	sox_allowed = {type=onestrof("sox")}
 	sox_comment={
 		file="The wav file to play",
 		file_empty="The sound to play whe the mailbox became empty, if omitted no soud will be played",
+		player="The command to use to play the sound",
 		type="Plays a sound to notify"
 		}
 	

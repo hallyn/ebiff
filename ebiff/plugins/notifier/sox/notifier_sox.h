@@ -41,6 +41,7 @@ protected:
 	static void *manager_f(void*);
 
 	string file;
+	string player;
 	string file_empty;
 	
 public:

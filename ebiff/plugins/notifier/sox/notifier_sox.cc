@@ -32,6 +32,8 @@ void NotifierSox::SetString(string name, string value) throw(NotifierException)
 {
 if(name == "file")
 	file = value;
+if(name == "player")
+	player = value;
 if(name == "empty")
 	file_empty = value;
 
@@ -56,9 +58,9 @@ void NotifierSox::Notify(ReducedMailbox* m)
 {
 pthread_mutex_lock(&files_mutex);
 if( m->CountNew() > 0)
-	files.push(file);
+	files.push(player + string(" ") + file);
 else if( file_empty != "")
-	files.push(file_empty);
+	files.push(player + string(" ") + file_empty);
 pthread_mutex_unlock(&files_mutex);
 
 }
@@ -90,7 +92,7 @@ while(true)
 		
 		// play file o
 		char cmd[255];
-		snprintf(cmd,255,"play %s",o.c_str());
+		snprintf(cmd,255,"%s",o.c_str());
 			
 		system(cmd);
 		
