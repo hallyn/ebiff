@@ -64,14 +64,14 @@ margin-top:0px;
     Supported mailbox drivers are: 
     <A HREF="#maildir">maildir</A>, <A HREF="#mbox">mbox</A>.
     <BR>
-    Supported notifyer drivers are: 
+    Supported notifier drivers are: 
     <A HREF="#stdout">stdout</A>, <A HREF="#gtk2">gtk2</A>, <A HREF="#xosd">xosd</A>, <A HREF="#flite">flite</A>, <A HREF="#sox">sox</A>.
     <BR>
-    The function call <TT>bind(mailbox,notifyer)</TT>
+    The function call <TT>bind(mailbox,notifier)</TT>
     creates a new <B>relation</B> , and adds it to the relation 
     list used by ebiff.<BR>
     An alternative way of calling <B>bind</B> is to pass a mailbox list or
-    a notifyer list instead of a single element. The right syntax to do this 
+    a notifier list instead of a single element. The right syntax to do this 
     is <TT>bind({box1,box2,..,boxn},{not1,not2,...,notm})</TT>.<BR>
     This is a short example of a configuration file (a longer and more complex
     example is in <TT>/usr/share/doc/ebiff/</TT> in the debian system):
@@ -93,9 +93,9 @@ b_inbox = new{
 	interval=10;
 	}
 	
--- create a gtk2 notifyer
+-- create a gtk2 notifier
 n_gtk2 = new{
-	type = "notifyer";
+	type = "notifier";
 	driver= {
 		type="gtk2";
 		position="right";
@@ -103,9 +103,9 @@ n_gtk2 = new{
 		}
 	}
 
--- create a xosd notifyer
+-- create a xosd notifier
 n_osd = new{
-	type = "notifyer";
+	type = "notifier";
 	driver= {
 		type="xosd";
 		}
@@ -169,11 +169,11 @@ non alphanumeric characters:
 <P>
     The last important thing you must know is tgat you must use the 
     <TT>new</TT> function (ok, in the example it has no <TT>()</TT>, but
-    it is automatically understood by LUA) to create a new mailbox or notifyer
+    it is automatically understood by LUA) to create a new mailbox or notifier
     instance (calling new also adds the <TT>id</TT> field, this is why it is a
     required field but not used in the sample configuration).<BR>
     A <B>relation</B> has the following fields (notice that the tables 
-    <B>mailbox</B> and <B>notifyer</B> that must be passed to <TT>bind</TT>
+    <B>mailbox</B> and <B>notifier</B> that must be passed to <TT>bind</TT>
     are subtables of <B>relation</B> and theys fields are listed here):
     <ul>
 <li>
@@ -182,11 +182,11 @@ of type <FONT color="green">string</FONT>
 is required, allowed value is <FONT color="red">relation</FONT>
 </li>
 <li>
-field <FONT color="blue">notifyer</FONT>
+field <FONT color="blue">notifier</FONT>
 of type <FONT color="green">table</FONT>
-is required, allowed value is <FONT color="DarkViolet">notifyer</FONT><ul><li>
-<DIV ID="notifyer">
-    Table <B>notifyer</B><I> ( A way to notify the user ) </I>
+is required, allowed value is <FONT color="DarkViolet">notifier</FONT><ul><li>
+<DIV ID="notifier">
+    Table <B>notifier</B><I> ( A way to notify the user ) </I>
     has these fields:</DIV>
 <ul>
 <li>
@@ -197,7 +197,7 @@ is required<BR><I style="margin-left:20px;">Forget this, it is automatically add
 <li>
 field <FONT color="blue">type</FONT>
 of type <FONT color="green">string</FONT>
-is required, allowed value is <FONT color="red">notifyer</FONT>
+is required, allowed value is <FONT color="red">notifier</FONT>
 </li>
 <li>
 field <FONT color="blue">driver</FONT>
@@ -429,12 +429,12 @@ is optional, default value is <FONT color="red">10</FONT>, allowed values are in
 <li>
 field <FONT color="blue">command</FONT>
 of type <FONT color="green">string</FONT>
-is optional, default value is <FONT color="red">/bin/true</FONT><BR><I style="margin-left:20px;">The command to execute (may be requested by the notifyer plugin to show the content of the mailbox, for example 'mutt -f mbox')</I>
+is optional, default value is <FONT color="red">/bin/true</FONT><BR><I style="margin-left:20px;">The command to execute (may be requested by the notifier plugin to show the content of the mailbox, for example 'mutt -f mbox')</I>
 </li>
 <li>
 field <FONT color="blue">name</FONT>
 of type <FONT color="green">string</FONT>
-is optional, default value is <FONT color="red">-no-name-</FONT><BR><I style="margin-left:20px;">The name that will be used by the notifyer as the mailbox identifyer</I>
+is optional, default value is <FONT color="red">-no-name-</FONT><BR><I style="margin-left:20px;">The name that will be used by the notifier as the mailbox identifyer</I>
 </li>
 </ul>
 </li></ul>
