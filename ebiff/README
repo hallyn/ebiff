@@ -33,8 +33,9 @@
       Flite can synthesize a voice that says what you want when a mail arrives,
       like "you got new mail"
     stdout
-      This is a simple and debugging purpose only plugin, it will be replaced
-      by an utmp plugin soon.
+      This is a simple and debugging purpose only plugin.
+    utmp
+      Broadcast-print mailbox status on users termanals.
 
 * What is ebiff development status? *
 
