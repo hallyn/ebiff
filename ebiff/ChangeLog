@@ -1,3 +1,4 @@
+- fixed maildir From parsing problem
 04/12/2004 0.0.4 incomprensible release
 - gtk2 plugin improved
 - wm plugin integrated

@@ -52,8 +52,8 @@ MailboxMaildir::MailboxMaildir() throw()
 {
 Reset();
 
-regcomp(&from_ex,"^From: *",REG_ICASE|REG_EXTENDED);
-regcomp(&subject_ex,"^Subject:",REG_ICASE|REG_EXTENDED);
+regcomp(&from_ex,"^From: ",REG_ICASE|REG_EXTENDED);
+regcomp(&subject_ex,"^Subject: ",REG_ICASE|REG_EXTENDED);
 	
 }
 
@@ -382,7 +382,7 @@ do
 	if(!found_s)
 		{
 		regexec(&subject_ex,line,1,p,0);
-		if (p[0].rm_so != -1)
+		if (p[0].rm_so /*!= -1*/ == 0)
 			{
 			unsigned int len = strlen(line);
 			if (line[len-1] == '\n')
@@ -400,14 +400,16 @@ do
 	if(!found_f)
 		{
 		regexec(&from_ex,line,1,p,0);
-		if (p[0].rm_so != -1)
+		if (p[0].rm_so /*!= -1*/ == 0)
 			{
 			unsigned int len = strlen(line);
+			printf("Eccola FROM: %s\n",line);
 			if (line[len-1] == '\n')
 				line[len-- -1] = '\0';
 			if (line[len-1] == '\r')
 				line[len-- -1] = '\0';
-	
+			
+			printf("Eccola FROM2: %s\n",&line[p[0].rm_eo]);
 			from = string(&line[p[0].rm_eo]);
 			found_f = true;
 			}
