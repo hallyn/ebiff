@@ -39,10 +39,13 @@ distclean: clean
 	dh_clean
 
 tgz: distclean
+	TMP=`mktemp`;\
 	PWD=`pwd`;\
 	OLD=`basename $$PWD`;\
 	cd ..;\
-	tar -czf ebiff-$(VERSION).tgz $$OLD;
+	find $$OLD -name CVS > $$TMP;\
+	tar -czf ebiff-$(VERSION).tgz -X $$TMP $$OLD;\
+	rm $$TMP
 
 deb: distclean
 	dpkg-buildpackage -rfakeroot -us -uc
@@ -61,7 +64,7 @@ release:
 	rm -fr tmp
 	mkdir tmp
 	tar -xzf dist-tgz/ebiff-*.tgz -C tmp
-	make -C tmp/ebiff-$(VERSION)/ deb
+	make -C tmp/ebiff*/ deb
 	rm -fr dist-deb
 	mkdir -p dist-deb/ebiff/
 	mv tmp/ebiff_$(VERSION).tar.gz dist-deb/ebiff
