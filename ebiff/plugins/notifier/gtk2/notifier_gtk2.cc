@@ -72,7 +72,7 @@ if( status.window == NULL)
 		"ebiff_gtk2","ebiff_gtk2");
 	gtk_window_set_resizable(GTK_WINDOW(status.window),FALSE);
 	g_signal_connect(status.window,
-		"delete-event",G_CALLBACK(gtk_true),NULL);
+		"delete-event",G_CALLBACK(NotifierGtk2::exit),NULL);
 	}
 
 	
@@ -457,6 +457,45 @@ bool NotifierGtk2::free(GtkWidget *w,gpointer user_data)
 ::free(user_data);
 //fprintf(stderr,"FFFF\n");
 return FALSE;
+}
+/*******************************************************************************
+ *
+ *
+ */
+void NotifierGtk2::response(
+		GtkDialog *dialog,gint arg1,gpointer user_data)
+{
+switch (arg1)
+	{
+	case GTK_RESPONSE_ACCEPT:
+		::exit(0);
+	}
+}
+
+bool NotifierGtk2::exit(GtkWidget *w,gpointer user_data)
+{
+GtkWidget* dialog;
+GtkWidget*label = gtk_label_new ("\nDo you really want to close ebiff?\n\n");
+
+dialog = gtk_dialog_new_with_buttons("Question",NULL,
+                                  GTK_DIALOG_MODAL,
+				  "Yes",
+                                  GTK_RESPONSE_ACCEPT,
+                                        "No",
+                                                 GTK_RESPONSE_REJECT,
+                                                 NULL);
+g_signal_connect_swapped (GTK_OBJECT (dialog), 
+                             "response", 
+                             G_CALLBACK (NotifierGtk2::response),
+                             GTK_OBJECT (dialog));
+gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+                      label);
+gtk_widget_show_all(dialog);
+
+gtk_dialog_run (GTK_DIALOG (dialog));
+gtk_widget_destroy (dialog);
+
+return TRUE;
 }
 
 /*******************************************************************************

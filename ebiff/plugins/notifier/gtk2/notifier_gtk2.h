@@ -122,7 +122,9 @@ protected:
 	static bool hide_and_toggle(GtkWidget *w,
 			GdkEvent *event,gpointer user_data);
 	static bool destroy(GtkWidget *w,gpointer user_data);
+	static bool exit(GtkWidget *w,gpointer user_data);
 	static bool free(GtkWidget *w,gpointer user_data);
+	static void response(GtkDialog *dialog,gint arg1,gpointer user_data);
 public:
 	void SetString(string name, string value) throw(NotifierException);
 	void SetBool(string name, bool value) throw(NotifierException);
