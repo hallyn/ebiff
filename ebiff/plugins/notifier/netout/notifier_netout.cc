@@ -183,106 +183,113 @@ pthread_mutex_t *q_mutex = w->first;
 thread_param *p = w->second;
 
 int rc = 0;
-int s = -1;
+int s = -1, s1 = -1;
 struct sockaddr_in ad;
 socklen_t adl = sizeof(ad);
 char line[1000];
 
-s = socket(PF_INET, SOCK_STREAM, 0);
-if(s == -1)
-	{
-	fprintf(stderr,"Unable to create the socket\n");
-	exit(1);
-	}
+while( p->ready != 2) sleep(1);
 
-while( p->ready != 2)
-	sleep(1);
-
-ad.sin_family = AF_INET;
-ad.sin_port = htons(p->port);
-ad.sin_addr.s_addr = INADDR_ANY;
-
-rc = bind(s,(struct sockaddr*)&ad,adl);
-	
-if(rc != 0)
-	{
-	fprintf(stderr,"Unable to bind: %s\n",strerror(errno));
-	close(s);
-	exit(1);
-	}
-
-rc = listen(s,5);
-
-if(rc != 0)
-	{
-	fprintf(stderr,"Unable to listen: %s\n",strerror(errno));
-	close(s);
-	exit(1);
-	}
-
-//cout << "We are ready!\n";
-
-rc = accept(s,NULL,NULL);
-
-if(rc == -1)
-	{
-	fprintf(stderr,"Unable to accept: %s\n",strerror(errno));
-	close(s);
-	exit(1);
-	}
-
-close(s);
-
-char tmp[10];
-snprintf(tmp,10,"%d",VERSION);
-
-s = sendl(tmp,strlen(tmp),rc);
-
-if(s == -1)
-	{
-	fprintf(stderr,"Unable to send: %s\n",strerror(errno));
-	close(rc);
-	exit(1);
-	}
-
-s = readl(line,1000,rc);
-
-if(line != p->pass + "\r\n")
-	{
-	fprintf(stderr,"Wrong password!\n");
-	close(rc);
-	exit(1);
-	}
-
-while(1)
-	{
-	sleep(1);
-	
-	pthread_mutex_lock(q_mutex);
-	int size = p->outgoing.size();
-	pthread_mutex_unlock(q_mutex);
-
-	while( size > 0 )
+for (;;){
+	sleep(5);
+	s = socket(PF_INET, SOCK_STREAM, 0);
+	if(s == -1)
 		{
-		pthread_mutex_lock(q_mutex);
-		string tmp = p->outgoing.front();
-		p->outgoing.pop();
-		pthread_mutex_unlock(q_mutex);
+		fprintf(stderr,"Unable to create the socket\n");
+		exit(1);
+		}
 
-		s = sendl(tmp.c_str(),tmp.length(),rc);
+	/* socket stuff */
+	memset(&ad,0,adl);
+	ad.sin_family = AF_INET;
+	ad.sin_port = htons(p->port);
+	ad.sin_addr.s_addr = INADDR_ANY;
+	rc = bind(s,(struct sockaddr*)&ad,adl);
+		
+	if(rc != 0)
+		{
+		fprintf(stderr,"Unable to bind: %s\n",strerror(errno));
+		close(s);
+		exit(1);
+		}
 
-		if(s == -1)
-			{
-			fprintf(stderr,"Unable to send: %s\n",strerror(errno));
-			exit(1);
-			}
+	rc = listen(s,1);
+
+	if(rc != 0)
+		{
+		fprintf(stderr,"Unable to listen: %s\n",strerror(errno));
+		close(s);
+		exit(1);
+		}
+
+	s1 = accept(s,NULL,NULL);
+
+	if(s1 == -1)
+		{
+		fprintf(stderr,"Unable to accept: %s\n",strerror(errno));
+		close(s);
+		exit(1);
+		}
+
+	close(s);
+	s = -1;
+	
+	/* now we do not accept, s1 will be he new socket */
+	char tmp[10];
+	snprintf(tmp,10,"%d",VERSION);
+
+	rc = sendl(tmp,strlen(tmp),s1);
+
+	if(rc == -1)
+		{
+		fprintf(stderr,"Unable to send: %s\n",strerror(errno));
+		close(s1);
+		s1 = -1;
+		continue;
+		}
+
+	rc = readl(line,1000,s1);
+
+	if(line != p->pass + "\r\n")
+		{
+		fprintf(stderr,"Wrong password!\n");
+		close(s1);
+		s1 = -1;
+		continue;
+		}
+
+	while(s1 != -1) /* while the socket is valid */
+		{
+		sleep(1);
 		
 		pthread_mutex_lock(q_mutex);
-		size = p->outgoing.size();
+		int size = p->outgoing.size();
 		pthread_mutex_unlock(q_mutex);
+
+		while( size > 0 )
+			{
+			pthread_mutex_lock(q_mutex);
+			string tmp = p->outgoing.front();
+			p->outgoing.pop();
+			pthread_mutex_unlock(q_mutex);
+
+			rc = sendl(tmp.c_str(),tmp.length(),s1);
+
+			if(rc == -1)
+				{
+				fprintf(stderr,"Unable to send: %s\n",
+						strerror(errno));
+				close(s1);
+				s1 = -1;
+				break;	
+				}
+			
+			pthread_mutex_lock(q_mutex);
+			size = p->outgoing.size();
+			pthread_mutex_unlock(q_mutex);
+			}
 		}
 	}
-
 }
 
 

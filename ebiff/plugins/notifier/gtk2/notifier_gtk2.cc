@@ -394,7 +394,7 @@ for ( int i = 0 ;  i < l.len ; i++){
 		int len = strlen(l.chunks[i].data) / 4 * 3;
 		char * data = (char*)malloc(sizeof(char) * len);
 		base64_decode(l.chunks[i].data,data);
-		GError *e;
+		GError *e=NULL;
 		char* data_utf8 = 
 			g_convert(data,len,"utf-8",l.chunks[i].language,
 				NULL,NULL,&e);
@@ -410,7 +410,7 @@ for ( int i = 0 ;  i < l.len ; i++){
 		needs_special_encoding = true;
 	} else if (l.chunks[i].encoding == 'q') {
 		char* data = unquote(l.chunks[i].data);
-		GError *e;
+		GError *e=NULL;
 		int len = strlen(data);
 		char * data_utf8 = 
 			g_convert(data,len,"utf-8",l.chunks[i].language,
