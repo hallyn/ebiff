@@ -57,6 +57,13 @@ Description: ebiff's utmp notifier
  This plugin broadcast-prints a simple message on every terminal owned by 
  the user, like xterms or consoles.
 
+Package: ebiff-notifier-wm
+Architecture: any
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's utmp notifier
+ This plugin provides a dockable app for WindowMaker
+
 Package: ebiff-mailbox-mbox
 Architecture: any
 Depends: ${shlibs:Depends}, ebiff

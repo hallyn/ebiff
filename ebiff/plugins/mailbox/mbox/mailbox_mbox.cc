@@ -40,6 +40,7 @@
 MailboxMbox::MailboxMbox() throw()
 {
 last_modify = 0;
+last_size = 0;
 //end_position = 0;
 end_string = "";
 
@@ -48,8 +49,9 @@ n_new = 0;
 n_old = 0;
 mails = vector<MailInfo>(0);
 
-regcomp(&from_ex,"^From: *",REG_ICASE|REG_EXTENDED);
-regcomp(&subject_ex,"^Subject:",REG_ICASE|REG_EXTENDED);
+regcomp(&from_ex,"\nFrom: *",REG_ICASE|REG_EXTENDED);
+regcomp(&subject_ex,"\nSubject: *",REG_ICASE|REG_EXTENDED);
+regcomp(&status_ex,"\nStatus: *",REG_ICASE|REG_EXTENDED);
 firsttime = true;
 
 path = "";
@@ -106,10 +108,12 @@ void MailboxMbox::SetNumber(string name,double value) throw(MailboxException)
  */ 
 bool MailboxMbox::IsChanged() throw(MailboxException)
 {
+off_t s_new;
 time_t t_new;
 bool rc;
 
 t_new = last_modify;
+s_new = last_size;
 
 try	{
 	UpdateTimestamp();
@@ -119,9 +123,10 @@ catch (MailboxException e)
 	throw e;
 	}
 
-rc = t_new < last_modify;
+rc = (t_new < last_modify) || (s_new != last_size);
 
 last_modify = t_new;
+last_size = s_new;
 
 return rc;
 }
@@ -182,7 +187,6 @@ return mails[n].GetUid();
  */ 
 void MailboxMbox::Sync() throw(MailboxException)
 {
-	
 if(!IsChanged())
 	return;
 
@@ -194,7 +198,6 @@ while( link(path.c_str(),(path+string(".lock")).c_str()) != 0)
 	}
 
 UpdateTimestamp();
-n_old = n_new;
 
 FILE* f = fopen(path.c_str(),"r");
 
@@ -204,6 +207,8 @@ if(f == NULL)
 	THROW(string("Unable to open ") + path.c_str());
 	}
 
+#if 0
+n_old = n_new;
 bool check_resumed = !firsttime && newonly;
 if( !firsttime && newonly && fsetpos(f,&end_position) != 0)
 	{
@@ -319,6 +324,137 @@ end_string = last;
 //fprintf(stderr,"Saving end string to %s\n",end_string.c_str());
 
 mails.resize(mails.size());
+#else
+regmatch_t p[1];
+string sb,fr,last;
+int newm;
+unsigned long pos;
+char l[1024];
+char *c;
+size_t nr;
+unsigned long int cur = 0;
+n_new = n_old = 0;
+
+while(!feof(f))
+{
+	pos = ftell(f);
+	nr=fread(l,1,1023,f);
+
+	if (nr == 0)
+	{
+		if (feof(f))
+			break;
+		if (ferror(f))
+		{
+			unlink((path+string(".lock")).c_str());
+			THROW("Error reading file");
+		}
+	}
+
+	if ( (c = strstr(l,"\n\n")) != NULL )
+	{
+		*c = '\0';
+	}
+	else if ( (c = strstr(l,"\r\n\r\n")) != NULL )
+	{
+		*c = '\0';
+	}
+	else
+	{
+		l[nr] = '\0';
+	}
+
+	p[0].rm_so = p[0].rm_eo = -1;
+	// Parse read header
+	regexec(&status_ex,l,1,p,0);
+	if (p[0].rm_so != -1)
+	{
+		char bak;
+		c = &l[p[0].rm_eo];
+		while ((*c != '\n') && (*c != '\r'))
+			c++;
+		bak = *c;
+		*c = '\0';
+		if (strchr(&l[p[0].rm_eo],'R') == NULL)
+		{
+			newm = 1;
+		}
+		else
+		{
+			newm = 0;
+		}
+		*c = bak;
+		p[0].rm_so = p[0].rm_eo = -1;
+	}
+	else
+	{
+		newm = 1;
+	}
+
+	if (newm)
+	{
+		n_new++;
+		regexec(&subject_ex,l,1,p,0);
+		if (p[0].rm_so != -1)
+		{
+			char bak;
+			c = &l[p[0].rm_eo];
+			while ((*c != '\n') && (*c != '\r'))
+				c++;
+			bak = *c;
+			*c = '\0';
+			while (l[p[0].rm_eo] == ' ')
+				p[0].rm_eo++;
+			sb = &l[p[0].rm_eo];
+			*c = bak;
+			p[0].rm_so = p[0].rm_eo = -1;
+		}
+		regexec(&from_ex,l+1,1,p,0);
+		if (p[0].rm_so != -1)
+		{
+			char bak;
+			c = &l[p[0].rm_eo];
+			while ((*c != '\n') && (*c != '\r'))
+				c++;
+			bak = *c;
+			*c = '\0';
+			while (l[p[0].rm_eo] == ' ')
+				p[0].rm_eo++;
+			fr = &l[p[0].rm_eo];
+			*c = bak;
+			p[0].rm_so = p[0].rm_eo = -1;
+		}
+
+		if(mails.size() <= cur)
+			mails.resize(cur + 10);
+		mails[cur] = MailInfo(sb,fr,"");
+		cur++;
+	}
+	else
+	{
+		n_old++;
+	}
+
+	// Seek for next message
+	int lastempty=0;
+	fseek(f,pos,SEEK_SET);
+	do
+	{
+		pos = ftell(f);
+		fgets(l,100,f);
+
+		if ( (lastempty) && (strncmp(l,"From",4)==0) )
+		{
+			fseek(f,pos,SEEK_SET);
+			break;
+		}
+
+		lastempty = ((strcmp(l,"\n") == 0) || (strcmp(l,"\r\n")==0));
+	}
+	while(!feof(f));
+}
+//printf("NEW: %d OLD: %d\n",n_new,n_old);
+#endif
 
 fclose(f);
 unlink((path+string(".lock")).c_str());
@@ -345,6 +481,7 @@ if( rc == -1 )
 	THROW(string(strerror(errno)) + " " + file);
 
 last_modify = s.st_mtime;
+last_size = s.st_size;
 }
 
 /*******************************************************************************

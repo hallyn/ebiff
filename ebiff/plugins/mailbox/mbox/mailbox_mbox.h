@@ -50,6 +50,7 @@ protected:
 	vector<MailInfo> mails;
 	
 	time_t last_modify;
+	off_t last_size;
 	fpos_t end_position;
 	string end_string;
 	
@@ -59,7 +60,7 @@ protected:
 	string path;
 	bool newonly;
 	
-	regex_t from_ex,subject_ex;
+	regex_t from_ex,subject_ex,status_ex;
 	
 	bool firsttime;
 public:

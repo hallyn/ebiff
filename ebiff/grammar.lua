@@ -173,7 +173,7 @@ notifier_must = {"type","driver","id"}
 notifier_default = {}
 notifier_allowed = {
 	type=onestrof("notifier"),
-	driver=onetblof("stdout","gtk2","xosd","flite","sox","utmp","netout")}
+	driver=onetblof("stdout","gtk2","xosd","flite","sox","utmp","netout","wm")}
 notifier_comment={
 	id="Forget this, it is automatically added by new()",
 	type="A way to notify the user"
@@ -308,6 +308,17 @@ notifier_comment={
 	timeout="Seconds before hiding notice",
 	type="Xosd is X on screen display"}
 
+	-- ------------------------------------------------------------------ --
+	-- notifier::wm definitions
+	--
+	wm_types = { type="string",command="string" }
+	wm_must = {"type"}
+	wm_default = {command=""}
+	wm_allowed = {type=onestrof("wm")}
+	wm_comment={
+		command="The shell command to be executed when clicked"
+		}
+	
 --<==========================================================================>--
 
 relation_types = {mailbox="table",

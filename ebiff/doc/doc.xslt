@@ -267,7 +267,7 @@ margin-left:20px;
     <OL>
     	<LI><A HREF="#intro">Introduction</A></LI>
 	<LI><A HREF="#simple">Simple example</A></LI>
-	<LI><A HREF="#lua">Some on LUA</A></LI>
+	<LI><A HREF="#lua">Some words about LUA</A></LI>
 	<LI><A HREF="#plugins">The plugins options</A></LI>
 	<LI><A HREF="#functions">functions.lua</A></LI>
 	<LI><A HREF="#complex">Complex example</A></LI>
@@ -331,7 +331,7 @@ bind(b_inbox,{n_gtk2,n_osd})
     10 seconds and eventually both <TT>n_gtk2</TT> and <TT>n_osd</TT>
     will be used to notify the user.<BR/>
     </P>
-    <H2 ID="lua">Some on LUA</H2>
+    <H2 ID="lua">Some words about LUA</H2>
     <P>
     Comments starts with <TT>--</TT>, strings can be queted with
     single <TT>'</TT> or double <TT>"</TT> quotes, boolean values are 
@@ -581,7 +581,7 @@ bind(selectmailbox(mailboxes,"friends"),sox)</PRE>
    </p>
    <H3>Configuration</H3>
    <p>
-   The simplest configuration is to have only the notout notifier on host 
+   The simplest configuration is to have only the netout notifier on host 
    <B>A</B> and only the netin mailbox on host <B>B</B>. This allows you
    to have all the mailboxes on <B>A</B> seen as one mailbox on <B>B</B>.<BR/>
    <BR/>
@@ -603,8 +603,8 @@ bind(selectmailbox(mailboxes,"friends"),sox)</PRE>
    From <B>B</B> you can simply configure the netin plugin to use localhost 
    as the host and port 12345 and start an ssh tunnel with<BR/>
    <tt>ssh -C -L 12345:A:12345 A</tt><BR/> To protect your privacy even more it 
-   would be easy to patch ebiff'netout to accept incoming connection only from 
-   localhost or a trusted number of computers, but since not it is not 
+   would be easy to patch ebiff netout to accept incoming connection only from 
+   localhost or a trusted number of computers, but since now it is not 
    implemented.
    </P>
 

@@ -44,5 +44,15 @@ else
 	echo "   --> apt-get install flite1-dev"
 fi
 
+echo -n "-> wm..."
+test -e /usr/include/X11/Xlib.h
+if [ $? = 0 ]; then
+	PLUGINS="$PLUGINS wm"
+	echo "ok"
+else
+	echo "unable to find /usr/include/X11/Xlib.h"
+	echo "   --> apt-get install xlibs-dev"
+fi
+
 echo
 echo "PLUGINS: $PLUGINS"

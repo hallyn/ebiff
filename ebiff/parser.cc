@@ -243,6 +243,10 @@ while (lua_next(L,-2) != 0)
 				
 				}break;
 				   
+			case NOTIFIER_DRIVER_CONTENT_WM: {
+				n=PluginRegistry::
+					notifier_plugin_new("wm");
+				}break;
 			}
 		m_notifier[NOTIFIER_CAST(&b).id] = n;
 		}

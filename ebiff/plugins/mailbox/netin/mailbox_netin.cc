@@ -13,6 +13,7 @@
  * 	Enrico Tassi <gareuselesinge@users.sourceforge.net>
  ******************************************************************************/
 
+#define TEMP_FAILURE_RETRY(r) (r)
 
 #include <iostream>
 #include <list>
