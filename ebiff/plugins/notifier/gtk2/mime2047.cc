@@ -152,16 +152,6 @@ struct mime2047_info_list dfa_jumper(string s){
 	return l;
 }
 
-/*
-static void print_chunk(struct mime2047_info m) {
-	if (m.encoding == 'r') 
-		printf("'%s' ",m.data);
-	else
-		printf("(%s,%c)'%s' ",m.language,m.encoding,m.data);
-			
-}
-*/
-
 void free_mime2047_info_list(struct mime2047_info_list l){
 	for(int i = 0; i < l.len ; i++){
 		::free(l.chunks[i].language);
@@ -170,16 +160,11 @@ void free_mime2047_info_list(struct mime2047_info_list l){
 	::free(l.chunks);
 }
 
-/*
-int main(){
-	//struct mime2047_info_list l = dfa_jumper("abc=?iso88?B?ABCD?=def");
-	//struct mime2047_info_list l = dfa_jumper("=?iso88?B?ABCD?=def");
-	struct mime2047_info_list l = dfa_jumper("=?iso88?B?ABCD?=");
-
-	for ( int i = 0 ; i < l.len ; i++) 
-		print_chunk(l.chunks[i]);		
-	printf("\n");	
-	
-	return 0;
+void print_chunk(struct mime2047_info m) {
+	if (m.encoding == 'r') 
+		printf("'%s' ",m.data);
+	else
+		printf("(%s,%c)'%s' ",m.language,m.encoding,m.data);
+			
 }
-*/
+

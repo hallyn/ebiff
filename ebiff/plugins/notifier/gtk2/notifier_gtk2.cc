@@ -386,33 +386,52 @@ string label_markup;
 bool needs_special_encoding = false;
 
 for ( int i = 0 ;  i < l.len ; i++){
+	//print_chunk(l.chunks[i]);
+	
 	if (l.chunks[i].encoding == 'r') {
 		label_markup += escape_xml(l.chunks[i].data);
 	} else if (l.chunks[i].encoding == 'b') {
-		char * data = (char*)malloc(sizeof(char) * 
-				strlen(l.chunks[i].data) / 4 * 3);
+		int len = strlen(l.chunks[i].data) / 4 * 3;
+		char * data = (char*)malloc(sizeof(char) * len);
 		base64_decode(l.chunks[i].data,data);
-		label_markup += string("<span lang=\"") + 
-			string(l.chunks[i].language) +
-		 	string("\" >") + escape_xml(data) +
-			string("</span>");
+		GError *e;
+		char* data_utf8 = 
+			g_convert(data,len,"utf-8",l.chunks[i].language,
+				NULL,NULL,&e);
+		if (data_utf8 == NULL) {
+			fprintf(stderr,"convert from %s to utf-8 failed: %s\n",
+				l.chunks[i].language,e->message);
+			data_utf8 = g_strdup(data);
+		}
+		label_markup += string("<span lang=\"utf-8\" >") + 
+			escape_xml(data_utf8) +	string("</span>");
 		::free(data);
+		g_free(data_utf8);
 		needs_special_encoding = true;
 	} else if (l.chunks[i].encoding == 'q') {
-		label_markup +=	string("<span lang=\"") + 
-			string(l.chunks[i].language) +
-		 	string("\" >") + 
-			escape_xml(unquote(l.chunks[i].data)) +
-			string("</span>");
+		char* data = unquote(l.chunks[i].data);
+		GError *e;
+		int len = strlen(data);
+		char * data_utf8 = 
+			g_convert(data,len,"utf-8",l.chunks[i].language,
+				NULL,NULL,&e);
+		if (data_utf8 == NULL) {
+			fprintf(stderr,"convert from %s to utf-8 failed: %s\n",
+				l.chunks[i].language,e->message);
+			data_utf8 = g_strdup(data);
+		}
+		label_markup +=	string("<span lang=\"utf-8\" >") + 
+			escape_xml(data_utf8) +	string("</span>");
+		g_free(data_utf8);
 		needs_special_encoding = true;
 	}
 }
-
 free_mime2047_info_list(l);
-	
+
 //render it
 lab = gtk_label_new(s.c_str());
 if ( needs_special_encoding ){
+	//printf(" -> %s\n\n\n",label_markup.c_str());
 	gtk_label_set_markup(GTK_LABEL(lab),label_markup.c_str());
 }
 
@@ -500,7 +519,7 @@ if (!i->preview){
 		GtkWidget* l1,*l2,*l3;
 		char str[5];
 
-		snprintf(str,5,"%d",j-2);
+		snprintf(str,5,"%lu",j-1);
 
 		l1 = gtk_label_new(str);
 		l2 = UnicodeLabelOf(i->From);

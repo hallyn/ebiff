@@ -33,5 +33,6 @@ struct mime2047_info_list {
 
 struct mime2047_info_list dfa_jumper(string s);
 void free_mime2047_info_list(struct mime2047_info_list l);
+void print_chunk(struct mime2047_info m);
 
 #endif
