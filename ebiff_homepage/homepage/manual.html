@@ -5,17 +5,17 @@
 <style type="text/css">
 
 TT {
-font-size:14pt;
+font-size:12pt;
 font-family:courier;
 }
 
 I {
-font-size:14pt;
+font-size:12pt;
 font-family:helvetica;
 }
 
 PRE {
-font-size:13pt;
+font-size:11pt;
 font-family:courier;
 border-style:solid;
 border-width:1px;
@@ -28,7 +28,7 @@ background-color:#fffdcf;
 body { 
 background-color: #fcfcfc;
 font-family: helvetica,sans-serif;
-font-size:15pt;
+font-size:13pt;
 margin-top:0px;
 margin-bottom:0px;
 margin-left:0px;
@@ -73,7 +73,7 @@ margin-right:20px;
 }
 
 H1 {
-font-size: 24pt;
+font-size: 22pt;
 color:#dfdff0;
 text-align:center;
 border-style:solid;
@@ -86,13 +86,21 @@ margin-top:0px;
 }
 
 H2 {
-font-size: 16pt;
+font-size: 14pt;
 color:#2f2fc0;
 text-align:left;
 font-weight:normal;
 background-color:#dfdff0;
 margin-left:10px;
 width:30%;
+}
+
+H3 {
+font-size: 14pt;
+color:#2f2fc0;
+text-align:left;
+font-weight:normal;
+margin-left:10px;
 }
 
 A  {
@@ -136,7 +144,7 @@ margin-right:20px;
 
 UL DL DT {
 font-family:courier,fixed;
-font-size:14pt;
+font-size:12pt;
 font-weight:bold;
 margin-left:20px;
 }
@@ -149,20 +157,21 @@ margin-left:20px;
     The only purpose of the configuration file is to say ebiff to
     check mailbox x for new mail and notify the user with y.<BR>
     Supported mailbox drivers are: 
-    <A HREF="#maildir">maildir</A>, <A HREF="#mbox">mbox</A>.
+    <A HREF="#maildir">maildir</A>, <A HREF="#mbox">mbox</A>, <A HREF="#netin">netin</A>.
     <BR>
     Supported notifier drivers are: 
-    <A HREF="#stdout">stdout</A>, <A HREF="#gtk2">gtk2</A>, <A HREF="#xosd">xosd</A>, <A HREF="#flite">flite</A>, <A HREF="#sox">sox</A>, <A HREF="#utmp">utmp</A>.
+    <A HREF="#stdout">stdout</A>, <A HREF="#gtk2">gtk2</A>, <A HREF="#xosd">xosd</A>, <A HREF="#flite">flite</A>, <A HREF="#sox">sox</A>, <A HREF="#utmp">utmp</A>, <A HREF="#netout">netout</A>, <A HREF="#wm">wm</A>.
     <BR>
     Sections:
     </P>
 <OL>
 <LI><A HREF="#intro">Introduction</A></LI>
 <LI><A HREF="#simple">Simple example</A></LI>
-<LI><A HREF="#lua">Some on LUA</A></LI>
+<LI><A HREF="#lua">Some words about LUA</A></LI>
 <LI><A HREF="#plugins">The plugins options</A></LI>
 <LI><A HREF="#functions">functions.lua</A></LI>
 <LI><A HREF="#complex">Complex example</A></LI>
+<LI><A HREF="#net">Network transparent notification</A></LI>
 </OL>
 <H2 ID="intro">Introduction</H2>
 <P>
@@ -221,7 +230,7 @@ bind(b_inbox,{n_gtk2,n_osd})
     10 seconds and eventually both <TT>n_gtk2</TT> and <TT>n_osd</TT>
     will be used to notify the user.<BR>
 </P>
-<H2 ID="lua">Some on LUA</H2>
+<H2 ID="lua">Some words about LUA</H2>
 <P>
     Comments starts with <TT>--</TT>, strings can be queted with
     single <TT>'</TT> or double <TT>"</TT> quotes, boolean values are 
@@ -310,7 +319,7 @@ is required, allowed value is <FONT color="red">notifier</FONT>
 <li>
 field <FONT color="blue">driver</FONT>
 of type <FONT color="green">table</FONT>
-is required, allowed values are <FONT color="DarkViolet">stdout</FONT>, <FONT color="DarkViolet">gtk2</FONT>, <FONT color="DarkViolet">xosd</FONT>, <FONT color="DarkViolet">flite</FONT>, <FONT color="DarkViolet">sox</FONT>, <FONT color="DarkViolet">utmp</FONT><ul>
+is required, allowed values are <FONT color="DarkViolet">stdout</FONT>, <FONT color="DarkViolet">gtk2</FONT>, <FONT color="DarkViolet">xosd</FONT>, <FONT color="DarkViolet">flite</FONT>, <FONT color="DarkViolet">sox</FONT>, <FONT color="DarkViolet">utmp</FONT>, <FONT color="DarkViolet">netout</FONT>, <FONT color="DarkViolet">wm</FONT><ul>
 <li>
 <DIV ID="stdout">
     Table <B>stdout</B><I> ( Simple print on stdout ) </I>
@@ -339,19 +348,29 @@ of type <FONT color="green">string</FONT>
 is required, allowed value is <FONT color="red">gtk2</FONT>
 </li>
 <li>
-field <FONT color="blue">preview</FONT>
-of type <FONT color="green">boolean</FONT>
-is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">Show a button to show the mailbox preview</I>
-</li>
-<li>
 field <FONT color="blue">showall</FONT>
 of type <FONT color="green">boolean</FONT>
 is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">Not hide the empty boxes</I>
 </li>
 <li>
+field <FONT color="blue">preview</FONT>
+of type <FONT color="green">boolean</FONT>
+is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">Show a button to show the mailbox preview</I>
+</li>
+<li>
+field <FONT color="blue">spannumber</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red"></FONT><BR><I style="margin-left:20px;">The pango markup attributes for the number label. See http://developer.gnome.org/doc/API/2.0/pango/PangoMarkupFormat.html for a summary. Attributes are putted in a &lt;span&gt; tag</I>
+</li>
+<li>
 field <FONT color="blue">position</FONT>
 of type <FONT color="green">string</FONT>
 is optional, default value is <FONT color="red">topleft</FONT>, allowed values are <FONT color="red">managed</FONT>, <FONT color="red">top</FONT>, <FONT color="red">bottom</FONT>, <FONT color="red">left</FONT>, <FONT color="red">right</FONT>, <FONT color="red">topleft</FONT>, <FONT color="red">topright</FONT>, <FONT color="red">bottomleft</FONT>, <FONT color="red">bottomright</FONT><BR><I style="margin-left:20px;">Where to put the window</I>
+</li>
+<li>
+field <FONT color="blue">spanname</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">weight="bold" color="#0000FF"</FONT><BR><I style="margin-left:20px;">As spannumber, but for the mailbox name</I>
 </li>
 </ul>
 </li>
@@ -459,6 +478,16 @@ field <FONT color="blue">file</FONT>
 of type <FONT color="green">string</FONT>
 is required<BR><I style="margin-left:20px;">The wav file to play</I>
 </li>
+<li>
+field <FONT color="blue">file_empty</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red"></FONT><BR><I style="margin-left:20px;">The sound to play whe the mailbox became empty, if omitted no soud will be played</I>
+</li>
+<li>
+field <FONT color="blue">player</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">/usr/bin/sox</FONT><BR><I style="margin-left:20px;">The command to use to play the sound</I>
+</li>
 </ul>
 </li>
 <li>
@@ -475,6 +504,45 @@ is required, allowed value is <FONT color="red">utmp</FONT>
 field <FONT color="blue">printall</FONT>
 of type <FONT color="green">boolean</FONT>
 is optional, default value is <FONT color="red">false</FONT><BR><I style="margin-left:20px;">Print From and Subject info of mails</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="netout">
+    Table <B>netout</B><I> ( Network forward plugin ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">pass</FONT>
+of type <FONT color="green">string</FONT>
+is required<BR><I style="margin-left:20px;">The password</I>
+</li>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">netout</FONT>
+</li>
+<li>
+field <FONT color="blue">port</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">6758</FONT>, allowed values are in range <FONT color="red">1</FONT>, <FONT color="red">65535</FONT><BR><I style="margin-left:20px;">The port to listen on</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="wm">
+    Table <B>wm</B>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">wm</FONT>
+</li>
+<li>
+field <FONT color="blue">command</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">xterm -e mutt</FONT><BR><I style="margin-left:20px;">The shell command to be executed when clicked</I>
 </li>
 </ul>
 </li>
@@ -504,7 +572,7 @@ is required, allowed value is <FONT color="red">mailbox</FONT>
 <li>
 field <FONT color="blue">driver</FONT>
 of type <FONT color="green">table</FONT>
-is required, allowed values are <FONT color="DarkViolet">maildir</FONT>, <FONT color="DarkViolet">mbox</FONT><ul>
+is required, allowed values are <FONT color="DarkViolet">maildir</FONT>, <FONT color="DarkViolet">mbox</FONT>, <FONT color="DarkViolet">netin</FONT><ul>
 <li>
 <DIV ID="maildir">
     Table <B>maildir</B><I> ( Maildir type mailbox, usually ~/Mail/ is a maildir ) </I>
@@ -541,6 +609,33 @@ is required<BR><I style="margin-left:20px;">You should know this :)</I>
 field <FONT color="blue">newonly</FONT>
 of type <FONT color="green">boolean</FONT>
 is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">List only new messages</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="netin">
+    Table <B>netin</B><I> ( Network forward plugin ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">pass</FONT>
+of type <FONT color="green">string</FONT>
+is required<BR><I style="margin-left:20px;">The netout plugin pass</I>
+</li>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">netin</FONT>
+</li>
+<li>
+field <FONT color="blue">host</FONT>
+of type <FONT color="green">string</FONT>
+is required<BR><I style="margin-left:20px;">The host to connect to</I>
+</li>
+<li>
+field <FONT color="blue">port</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">6758</FONT>, allowed values are in range <FONT color="red">1</FONT>, <FONT color="red">65535</FONT><BR><I style="margin-left:20px;">The port to connect to</I>
 </li>
 </ul>
 </li>
@@ -735,6 +830,46 @@ bind(mailboxes,xosd)
 -- bind some mailboex to the sox notifier
 bind(selectmailbox(mailboxes,"sf.net"),sox)
 bind(selectmailbox(mailboxes,"friends"),sox)</PRE>
+<H2 ID="net">Network transparent notification</H2>
+<P>
+   Sometimes you need to keep your mail on an host and being notified on 
+   another host.
+   </P>
+<H3>Introduction</H3>
+<p>
+   ebiff can check mailbox on a computer <B>A</B> and notify the 
+   user on a computer <B>B</B>.<BR>
+   To do this the simplest approach is to use the netout/netin plugins.
+   The netout plugin sends notification request, the netin plugin receives 
+   notification requests.<BR> 
+   You can see the netout plugin as a notifier and
+   the netin plugin as a mailbox.
+   </p>
+<H3>Configuration</H3>
+<p>
+   The simplest configuration is to have only the netout notifier on host 
+   <B>A</B> and only the netin mailbox on host <B>B</B>. This allows you
+   to have all the mailboxes on <B>A</B> seen as one mailbox on <B>B</B>.<BR><BR>
+   The most complex one is to have one netout notifier for each mailbox on 
+   <B>A</B> and a corresponding number of netin mailboxes on <B>B</B>.<BR><BR>
+   The first solution is simpler, but is not enough powerful to allow you
+   to remotely notify different mailboxes with different notifiers. The best
+   solution is to tailor the configuration file on your needs, defining a 
+   netout notifier for each set of mailboxes you want to notify with the 
+   same notifier.
+   </p>
+<H3>Security</H3>
+<P>
+   All network traffic is in clear. If your hosts are conneted by an untrusted
+   network you can user an ssh tunnel to solve the problem.<BR>
+   Consider the example on which you have one netout plugin on host <B>A</B>
+   and port 12345.
+   From <B>B</B> you can simply configure the netin plugin to use localhost 
+   as the host and port 12345 and start an ssh tunnel with<BR><tt>ssh -C -L 12345:A:12345 A</tt><BR> To protect your privacy even more it 
+   would be easy to patch ebiff netout to accept incoming connection only from 
+   localhost or a trusted number of computers, but since now it is not 
+   implemented.
+   </P>
 <HR>
 <div style="text-align:right;"><TT>$Id$</TT></div>
 </body>
