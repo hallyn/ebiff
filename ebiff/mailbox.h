@@ -41,9 +41,9 @@ public:
 	virtual void Sync() throw(MailboxException) = 0;
 	
 	// return a mailbox name
-	string GetName() throw();
+	virtual string GetName() throw();
 	void SetName(string n) throw();
-	string GetCommand() throw();
+	virtual string GetCommand() throw();
 	void SetCommand(string n) throw();
 	
 	virtual ~Mailbox()  throw() {};

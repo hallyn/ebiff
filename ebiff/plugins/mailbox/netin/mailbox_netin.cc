@@ -15,6 +15,7 @@
 
 
 #include <iostream>
+#include <list>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -53,9 +54,6 @@
  */ 
 MailboxNetin::MailboxNetin() throw()
 {
-n_new = 0;
-n_old = 0;
-mails = vector<MailInfo>(0);
 
 pthread_mutexattr_init(&queue_mutex_att);
 pthread_mutex_init(&queue_mutex,&queue_mutex_att);
@@ -68,6 +66,14 @@ manager = pthread_create(&manager,&manager_att,manager_f,
 				&netinfo,&queue_mutex),
 			&incoming));
 	
+}
+
+MailboxNetin::MailBoxInfo::MailBoxInfo()throw()
+{
+mails = vector<MailInfo>(0);
+n_new = n_old = 0;
+name = "--no name--";
+command = "--no command--";
 }
 
 class Buff
@@ -269,10 +275,11 @@ while(1)
 			}
 		while( strcmp(line,"\r\n"));
 
-		cout << "Read = \n" << file << "$\n" ;
+		//cout << "Read = \n" << file << "$\n" ;
 		pthread_mutex_lock(q_mutex);
 		q->push(file);
 		pthread_mutex_unlock(q_mutex);
+
 		}
 
 	}
@@ -287,6 +294,80 @@ MailboxNetin::~MailboxNetin()  throw()
 {
 }
 
+list<string> chunk(string s)
+{
+list <string> a;
+
+unsigned long int rc=0,rco=0;
+
+do
+	{
+	rc = s.find("\r\n",rco);
+
+	if(rc != string::npos)
+		{
+		a.push_back(s.substr(rco,rc-rco));
+			
+		rco = rc + 2;
+		}
+	}
+while(rc != string::npos);
+
+return a;
+}
+
+/*******************************************************************************
+ * parse
+ *
+ *
+ */ 
+MailboxNetin::MailBoxInfo MailboxNetin::parse(string s)
+{
+list<string> l = chunk(s);
+
+MailBoxInfo b;
+
+if( l.size() < 4 )
+	return b; //ERROR
+
+string name = *l.begin();
+l.erase(l.begin());
+
+string command = *l.begin();
+l.erase(l.begin());
+
+string nums = *l.begin();
+l.erase(l.begin());
+
+unsigned long int n_new=0,n_old=0;
+sscanf(nums.c_str(),"%lu %lu",&n_new,&n_old);
+
+b.n_new = n_new;
+b.n_old = n_old;
+b.name = name;
+b.command = command;
+
+for( unsigned long int i = 0 ; i < n_new ; i++)
+	{
+	if(l.size() < 4)
+		return b; //ERROR
+	
+	string from = *l.begin();
+	l.erase(l.begin());
+
+	string subj = *l.begin();
+	l.erase(l.begin());
+
+	string uid = *l.begin();
+	l.erase(l.begin());
+
+	b.mails[i].subject = subj;
+	b.mails[i].from = from;
+	b.mails[i].filename = uid;
+	}
+
+return b;
+}
 /*******************************************************************************
  * SetString
  *
@@ -338,6 +419,26 @@ if(name == "port")
  */ 
 bool MailboxNetin::IsChanged() throw(MailboxException)
 {
+string s;
+
+do
+	{
+	s = "";
+
+	pthread_mutex_lock(&queue_mutex);
+	if(!incoming.empty())
+		{
+		s = incoming.front();
+		incoming.pop();
+		}
+	pthread_mutex_unlock(&queue_mutex);
+
+	if( s != "")
+		infos.push(parse(s)); 
+	}
+while( s != "");
+
+return !infos.empty();
 }
 
 /*******************************************************************************
@@ -347,7 +448,7 @@ bool MailboxNetin::IsChanged() throw(MailboxException)
  */ 
 unsigned long int MailboxNetin::CountNew() throw(MailboxException)
 {
-return n_new;
+return current.n_new;
 }
 
 /*******************************************************************************
@@ -357,7 +458,7 @@ return n_new;
  */ 
 unsigned long int MailboxNetin::CountOld() throw(MailboxException)
 {
-return n_old;
+return current.n_old;
 }
 
 /*******************************************************************************
@@ -367,7 +468,7 @@ return n_old;
  */ 
 string MailboxNetin::GetNewFrom(unsigned long int n) throw(MailboxException)
 {
-return mails[n].GetFrom();
+return current.mails[n].from;
 }
 
 /*******************************************************************************
@@ -377,7 +478,7 @@ return mails[n].GetFrom();
  */ 
 string MailboxNetin::GetNewSubject(unsigned long int n)throw(MailboxException)
 {
-return mails[n].GetSubject();
+return current.mails[n].subject;
 }
 /*******************************************************************************
  * GetNewUid
@@ -386,7 +487,7 @@ return mails[n].GetSubject();
  */ 
 string MailboxNetin::GetNewUid(unsigned long int n)throw(MailboxException)
 {
-return mails[n].GetFilename();
+return current.mails[n].filename;
 }
 
 /*******************************************************************************
@@ -397,16 +498,12 @@ return mails[n].GetFilename();
 void MailboxNetin::Sync() throw(MailboxException)
 {
 
-}
+if (!infos.empty())
+	{
+	current = infos.front();
+	infos.pop();
+	}
 
-/*******************************************************************************
- * 
- *
- *
- */
-#define MAIL_LINE_LEN 100
-void MailboxNetin::ParseMessage(string file,string &subject,string &from) throw(MailboxException)
-{
 }
 
 /*******************************************************************************
@@ -431,56 +528,8 @@ MailboxNetin::MailInfo::MailInfo() throw()
 subject = "--no subject--";
 from = "--no from--";
 filename = "--no file--";
-marked = false;
 }
 
-/*******************************************************************************
- * 
- *
- *
- */
-string MailboxNetin::MailInfo::GetSubject() throw()
-{
-return subject;
-}
-
-/*******************************************************************************
- * 
- *
- *
- */
-string MailboxNetin::MailInfo::GetFrom() throw()
-{
-return from;
-}
-
-/*******************************************************************************
- * 
- *
- *
- */
-string MailboxNetin::MailInfo::GetFilename() throw()
-{
-return filename;
-}
-/*******************************************************************************
- * 
- *
- *
- */
-void MailboxNetin::MailInfo::Mark() throw()
-{
-marked = true;
-}
-/*******************************************************************************
- * 
- *
- *
- */
-void MailboxNetin::MailInfo::Unmark() throw()
-{
-marked = false;
-}
 /*******************************************************************************
  * 
  *
@@ -494,15 +543,6 @@ host = "--no host--";
 pass = "--no pass--";
 ready = 0;
 }
-/*******************************************************************************
- * 
- *
- *
- */
-bool MailboxNetin::MailInfo::IsMarked() throw()
-{
-return marked;
-}
 
 extern "C" Mailbox* new_mailbox(){
 return new MailboxNetin();
@@ -512,5 +552,13 @@ extern "C" void delete_mailbox(Mailbox*p){
 delete p;
 }
 
+string MailboxNetin::GetName()throw()
+{
+return current.name;
+}
 
+string MailboxNetin::GetCommand()throw()
+{
+return current.command;
+}
 

@@ -33,25 +33,14 @@ class MailboxNetin: public Mailbox
 	{
 protected:
 	
-	void ParseMessage(string file,string &subject,string &from) 
-			throw(MailboxException);
-
 	class MailInfo 
 		{
 	public:	
 		MailInfo(string sub, string fr, string file) throw();
 		MailInfo() throw();
-		string GetSubject() throw();
-		string GetFrom() throw();
-		string GetFilename() throw();
-		void Mark() throw();
-		void Unmark() throw();
-		bool IsMarked() throw();
-	protected:		
 		string subject;
 		string from;
 		string filename;
-		int marked;
 		};
 
 	class NetInfo
@@ -64,11 +53,19 @@ protected:
 		NetInfo();
 		};
 
-	vector<MailInfo> mails;
-		
-	unsigned long int n_new;
-	unsigned long int n_old;
+	class MailBoxInfo 
+		{
+	public:
+		MailBoxInfo()throw();
+		string name,command;
+		unsigned long int n_new,n_old;
+		vector<MailInfo> mails;
+		};
 
+	queue<MailBoxInfo> infos;
+	
+	MailBoxInfo current;
+		
 	string buffer;
 	
 	pthread_t manager;
@@ -82,6 +79,8 @@ protected:
 
 	queue<string> incoming;
 
+	MailBoxInfo parse(string);
+	
 public:
 	MailboxNetin() throw();
 	~MailboxNetin() throw();
@@ -98,6 +97,9 @@ public:
 	string GetNewFrom(unsigned long int n) throw(MailboxException);
 	string GetNewSubject(unsigned long int n) throw(MailboxException);
 	string GetNewUid(unsigned long int n) throw(MailboxException);
+
+	virtual string GetName()throw();;
+	virtual string GetCommand()throw();;
 	};
 
 // dlopen interface
