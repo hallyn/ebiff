@@ -3,7 +3,7 @@ Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
 Build-Depends: debhelper (>= 4.0.0), flite1-dev, libxosd-dev, libgtk2.0-dev, liblualib50-dev, liblua50-dev, lua50, xsltproc
-Standards-Version: 3.6.0
+Standards-Version: 3.6.1
 
 Package: ebiff
 Architecture: any

@@ -1,3 +1,9 @@
+ebiff (0.0.4) unstable; urgency=low
+
+  * gtk2 emproved
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sun,  5 Dec 2004 18:09:43 +0100
+
 ebiff (0.0.3) unstable; urgency=low
 
   * sox -> esdplay 
