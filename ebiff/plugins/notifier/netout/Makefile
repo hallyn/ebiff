@@ -12,7 +12,7 @@ clean:
 	rm -f *.o $(LIB) $(SRC:%.cc=.%.d)
 
 $(LIB):$(OBJ)
-	gcc -shared  -o $(LIB) $(OBJ)
+	gcc -shared  -o $(LIB) $(OBJ) -lpthread
 
 %.o:%.cc
 	g++ $(CPPFLAGS) -c $< 

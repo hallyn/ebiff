@@ -87,7 +87,7 @@ Buff() {len = 0;size = 65536;};
 void clear() {len = 0;};
 };
 
-int readl(char* buf,int len,int s,Buff* b)
+static int readl(char* buf,int len,int s,Buff* b)
 {
 ssize_t l=0;
 
@@ -129,7 +129,7 @@ if(l == 0)
 
 }
 
-int sendl(const char* buf,int len,int s)
+static int sendl(const char* buf,int len,int s)
 {
 int rc=0, sent = 0, sent2 = 0;
 
@@ -275,7 +275,6 @@ while(1)
 			}
 		while( strcmp(line,"\r\n"));
 
-		//cout << "Read = \n" << file << "$\n" ;
 		pthread_mutex_lock(q_mutex);
 		q->push(file);
 		pthread_mutex_unlock(q_mutex);
@@ -346,6 +345,8 @@ b.n_new = n_new;
 b.n_old = n_old;
 b.name = name;
 b.command = command;
+
+b.mails.resize(n_new);
 
 for( unsigned long int i = 0 ; i < n_new ; i++)
 	{

@@ -188,12 +188,14 @@ notifier_comment={
 	-- ------------------------------------------------------------------ --
 	-- notifier::stdout definitions
 	--
-	netout_types = { type="string"}
-	netout_must = {"type"}
-	netout_default = {}
-	netout_allowed = {type=onestrof("netout")}
+	netout_types = { type="string",port="number",pass="string"}
+	netout_must = {"type","pass"}
+	netout_default = {port=6758}
+	netout_allowed = {type=onestrof("netout"),port=onenumof(1,65535)}
 	netout_comment={
-		type="Network forward"
+		type="Network forward",
+		port="The port to listen on",
+		pass="The password"
 		}
 		
 	-- ------------------------------------------------------------------ --

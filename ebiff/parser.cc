@@ -188,6 +188,8 @@ while (lua_next(L,-2) != 0)
 				if(n==NULL)
 					break;
 
+				n->SetString("pass",NETOUT_CAST(&b).pass);
+				n->SetNumber("port",NETOUT_CAST(&b).port);		
 				}break;		
 			case NOTIFIER_DRIVER_CONTENT_SOX: {
 				n=PluginRegistry::

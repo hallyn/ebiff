@@ -18,6 +18,7 @@
 #ifndef NOTIFIER_NETOUT_H
 #define NOTIFIER_NETOUT_H
 
+#include <queue>
 
 #include "notifier.h"
 #include "notifier_exception.h"
@@ -25,7 +26,26 @@
 class NotifierNetout: public Notifier
 	{
 protected:
-	int printall;
+
+	pthread_t manager;
+	pthread_attr_t manager_att;
+	pthread_mutex_t queue_mutex;
+	pthread_mutexattr_t queue_mutex_att;
+	
+	static void *manager_f(void*);
+
+	class thread_param
+		{
+	public:
+		string pass;
+		unsigned int port;
+		
+		int ready;
+		queue<string> outgoing;
+		};
+	
+	thread_param param;
+		
 public:
 	void SetString(string name, string value) throw(NotifierException);
 	void SetBool(string name, bool value) throw(NotifierException);
