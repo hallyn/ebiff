@@ -21,7 +21,7 @@
 #define CFG_STD 	".ebiff"
 #define CFG_DEVEL 	"./samples/complex.lua"
 #define SO_STD		"/usr/share/ebiff/"
-//#define SO_STD		"./"
+#define SO_STD		"./"
 #define SO_DEVEL	"./"
 #define VERSION		"0.0.6"
 

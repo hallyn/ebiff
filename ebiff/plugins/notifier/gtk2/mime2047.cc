@@ -47,7 +47,7 @@ using namespace std;
 
 short int trans_table [] [8] = {
               /*    0      1      2      3      4      5      6          7 */ 
-/* =    */    {     1, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR, S_SUCCESS},
+/* =    */    {     1, S_ERR, S_ERR, S_ERR, S_ERR, S_ERR,     6, S_SUCCESS},
 /* ?    */    {     0,     2, S_ERR,     4, S_ERR,     6,     7, S_ERR    },
 /* ^?   */    {     0, S_ERR,     3,     3, S_ERR, S_ERR,     6, S_ERR    },
 /* QqBb */    {     0, S_ERR,     3,     3,     5, S_ERR,     6, S_ERR    }
@@ -65,20 +65,20 @@ struct mime2047_info_list dfa_jumper(string s){
 	short int state = S_BEGIN;
 	struct mime2047_info_list l = {0,NULL};
 	unsigned int position = 0;
-	char token;
+	int token;
 	int lang_begin = 0;
 	int lang_end = 0;
 	int chunk_begin = 0;
 	int data_begin = 0;
 	int data_end = 0;
 	char encoding;
-	int last_chunk = 0;
+	unsigned int last_chunk = 0;
 
-	for (position=0; position < s.size() || state == S_SUCCESS; position++) {
+	for (position=0; position < s.size() || state == S_SUCCESS; position++){
 
 		if (position < s.size()){
 			token = token_of_char(s.at(position));
-			printf("%c %d %d\n",s.at(position),token,state);
+			//printf("%c %d %d\n",s.at(position),token,state);
 		}
 
 		if ( state == 1 ) chunk_begin = position;
@@ -152,6 +152,7 @@ struct mime2047_info_list dfa_jumper(string s){
 	return l;
 }
 
+/*
 static void print_chunk(struct mime2047_info m) {
 	if (m.encoding == 'r') 
 		printf("'%s' ",m.data);
@@ -159,10 +160,20 @@ static void print_chunk(struct mime2047_info m) {
 		printf("(%s,%c)'%s' ",m.language,m.encoding,m.data);
 			
 }
+*/
 
+void free_mime2047_info_list(struct mime2047_info_list l){
+	for(int i = 0; i < l.len ; i++){
+		::free(l.chunks[i].language);
+		::free(l.chunks[i].data);
+	}
+	::free(l.chunks);
+}
+
+/*
 int main(){
-	/*struct mime2047_info_list l = dfa_jumper("abc=?iso88?B?ABCD?=def");*/
-	/*struct mime2047_info_list l = dfa_jumper("=?iso88?B?ABCD?=def");*/
+	//struct mime2047_info_list l = dfa_jumper("abc=?iso88?B?ABCD?=def");
+	//struct mime2047_info_list l = dfa_jumper("=?iso88?B?ABCD?=def");
 	struct mime2047_info_list l = dfa_jumper("=?iso88?B?ABCD?=");
 
 	for ( int i = 0 ; i < l.len ; i++) 
@@ -171,3 +182,4 @@ int main(){
 	
 	return 0;
 }
+*/

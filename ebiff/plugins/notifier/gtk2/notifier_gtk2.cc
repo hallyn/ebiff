@@ -346,21 +346,35 @@ return TRUE;
 // THIS is the worst code I've ever written
 // 
 
-static string remove_gt_le(string before)
+static string escape_xml(string before)
 {
-	for(;;){
-		unsigned int loc = before.find("<",0);
+	unsigned int loc=0;
+
+	//dirty hack
+	before = " " + before;
+	
+	for(;;){ //&
+		loc = before.find("&",loc+1);
+		if (loc == string::npos ) break;
+		before = before.substr(0,loc) + 
+			string("&amp;") + before.substr(loc+1);
+	}
+	loc=0;
+	for(;;){ //<
+		loc = before.find("<",loc+1);
 		if (loc == string::npos ) break;
 		before = before.substr(0,loc) + 
 			string("&lt;") + before.substr(loc+1);
 	}
-	for(;;){
-		unsigned int loc = before.find(">",0);
+	loc=0;
+	for(;;){ //>
+		loc = before.find(">",loc+1);
 		if (loc == string::npos ) break;
 		before = before.substr(0,loc) + 
 			string("&gt;") + before.substr(loc+1);
 	}
-return before;
+	
+	return before.substr(1);
 }
  
 GtkWidget* NotifierGtk2::UnicodeLabelOf(string s)
@@ -369,24 +383,28 @@ GtkWidget*lab;
 
 struct mime2047_info_list l = dfa_jumper(s);
 string label_markup;
+bool needs_special_encoding = false;
 
-for ( int i = 0 ;  i < l.size ; i++){
+for ( int i = 0 ;  i < l.len ; i++){
 	if (l.chunks[i].encoding == 'r') {
-		label_markup += l.chunks[i].data;
+		label_markup += escape_xml(l.chunks[i].data);
 	} else if (l.chunks[i].encoding == 'b') {
 		char * data = (char*)malloc(sizeof(char) * 
 				strlen(l.chunks[i].data) / 4 * 3);
 		base64_decode(l.chunks[i].data,data);
 		label_markup += string("<span lang=\"") + 
 			string(l.chunks[i].language) +
-		 	string("\" >") + string(data) +
+		 	string("\" >") + escape_xml(data) +
 			string("</span>");
 		::free(data);
+		needs_special_encoding = true;
 	} else if (l.chunks[i].encoding == 'q') {
 		label_markup +=	string("<span lang=\"") + 
 			string(l.chunks[i].language) +
-		 	string("\" >") + string(unquote(l.chunks[i].data)) +
+		 	string("\" >") + 
+			escape_xml(unquote(l.chunks[i].data)) +
 			string("</span>");
+		needs_special_encoding = true;
 	}
 }
 
@@ -394,7 +412,9 @@ free_mime2047_info_list(l);
 	
 //render it
 lab = gtk_label_new(s.c_str());
-gtk_label_set_markup(GTK_LABEL(lab),label_markup.c_str());
+if ( needs_special_encoding ){
+	gtk_label_set_markup(GTK_LABEL(lab),label_markup.c_str());
+}
 
 return lab;
 }
@@ -406,15 +426,13 @@ char str[5];
 string snumber = i->spannumber;
 string label;
 
-snprintf(str,5,"%u",x->content.size());
-	
 label = string(str);
 
 if (!i->preview){
 	ret = gtk_label_new(label.c_str());
 	gtk_label_set_markup(GTK_LABEL(ret),
-		(string("<span ") + snumber + string(" >") + 
-		 string(str) + string("</span>")).c_str());
+		(string("<span ") + escape_xml(snumber) + string(" >") + 
+		 escape_xml(str) + string("</span>")).c_str());
 
 } else {
 	GtkWidget* w1,*l1,*l2,*l3,*tbl,*s1,*s2,*s3,*scrolledwindow1,*viewport1;
@@ -424,8 +442,8 @@ if (!i->preview){
 
 	lab = gtk_label_new(label.c_str());
 	gtk_label_set_markup(GTK_LABEL(lab),
-		(string("<span ") + snumber + string(" >") + 
-		 string(str) + string("</span>")).c_str());
+		(string("<span ") + escape_xml(snumber) + string(" >") + 
+		 escape_xml(str) + string("</span>")).c_str());
 	ret = gtk_toggle_button_new();
 	gtk_container_add(GTK_CONTAINER(ret),lab);
 	gtk_widget_show(lab);
@@ -444,10 +462,11 @@ if (!i->preview){
 	l1 = gtk_label_new("#");
 	l2 = gtk_label_new("From");
 	l3 = gtk_label_new("Subject");
-	
+	/*	
 	gtk_label_set_markup(GTK_LABEL(l1),"<b>#</b>");
 	gtk_label_set_markup(GTK_LABEL(l2),"<b>From</b>");
 	gtk_label_set_markup(GTK_LABEL(l3),"<b>Subject</b>");
+	*/
 	
 	gtk_table_attach(GTK_TABLE(tbl),l1,0,1,0,1,GTK_FILL,GTK_SHRINK,2,0);
 	gtk_table_attach(GTK_TABLE(tbl),l2,2,3,0,1,GTK_FILL,GTK_SHRINK,2,0);
@@ -478,7 +497,6 @@ if (!i->preview){
 		{
 		GtkWidget* l1,*l2,*l3;
 		char str[5];
-		snprintf(str,5,"%lu",J-j+2);
 
 		l1 = gtk_label_new(str);
 		l2 = UnicodeLabelOf(i->From);
@@ -542,7 +560,6 @@ return FALSE;
 bool NotifierGtk2::free(GtkWidget *w,gpointer user_data)
 {
 ::free(user_data);
-//fprintf(stderr,"FFFF\n");
 return FALSE;
 }
 /*******************************************************************************
@@ -635,7 +652,6 @@ else
 	if( i->info.position == -1 )
 		{
 		t = GTK_WIDGET(GTK_TABLE(l->data));
-		//fprintf(stderr,"RESIZE\n");
 		if(i->position == string("top") ||
 		   i->position == string("bottom"))
 			gtk_table_resize(GTK_TABLE(t),2,size+1);
@@ -689,8 +705,9 @@ Box* x = i->mailbox;
 // create the button
 GtkWidget*b = gtk_button_new();
 GtkWidget*lbl = gtk_label_new(x->name.c_str());
-gtk_label_set_markup(GTK_LABEL(lbl),(string("<span ") + sname + string(" >") + 
-		 x->name + string("</span>")).c_str());
+gtk_label_set_markup(GTK_LABEL(lbl),(string("<span ") + 
+		escape_xml(sname) + string(" >") + 
+		escape_xml(x->name) + string("</span>")).c_str());
 
 gtk_widget_show(lbl);
 gtk_container_add(GTK_CONTAINER(b),lbl);
