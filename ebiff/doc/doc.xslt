@@ -126,12 +126,10 @@ margin-right:20px;
 
 UL {
 list-style-type:disc;
-margin-right:20px;
 }
 
 UL UL {
 list-style-type:square;
-margin-right:20px;
 }
 
 UL UL UL {
@@ -146,7 +144,7 @@ margin-right:20px;
 UL UL UL UL {
 list-style-type:square;
 border-style:none;
-margin-right:20px;
+margin-right:0px;
 }
 
 UL UL UL UL UL {
@@ -169,7 +167,7 @@ background-color:#2f2fc0;
 margin-left:0px;
 margin-right:0px;
 margin-top:0px;
-margin-right:20px;}
+}
 
 H2 {
 font-size: 18pt;
@@ -216,6 +214,7 @@ color: transparent;
 
 UL DL DD {
 background-color:#fffabf;
+margin-right:20px;
 }
 
 UL DL DT {
