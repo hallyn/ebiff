@@ -112,6 +112,7 @@ protected:
 	static int argn;
 	static const char* v[];
 	static char** argv;
+	static GtkWidget* UnicodeLabelOf(string s);
 
 	
 	// functions for the thread

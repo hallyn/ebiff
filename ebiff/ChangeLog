@@ -1,3 +1,5 @@
+- fixed gtk2 preview now correctly understands utf8 subjects/sender
+- fixed gtk2 pango attribute not applyed to all the labels
 - fixed maildir From parsing problem
 04/12/2004 0.0.4 incomprensible release
 - gtk2 plugin improved

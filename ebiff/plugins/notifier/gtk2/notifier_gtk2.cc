@@ -16,8 +16,11 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "notifier_gtk2.h"
+#include "escape.h"
+#include "base64.h"
 
 GThread* NotifierGtk2::refresher = NULL;
 queue<NotifierGtk2::UInfo*> NotifierGtk2::requests;
@@ -336,6 +339,105 @@ return TRUE;
  *
  */
 
+// support only one encoding in s
+//
+// THIS is the worst code I've ever written
+// 
+
+static string remove_gt_le(string before)
+{
+	for(;;){
+		unsigned int loc = before.find("<",0);
+		if (loc == string::npos ) break;
+		before = before.substr(0,loc) + 
+			string("&lt;") + before.substr(loc+1);
+	}
+	for(;;){
+		unsigned int loc = before.find(">",0);
+		if (loc == string::npos ) break;
+		before = before.substr(0,loc) + 
+			string("&gt;") + before.substr(loc+1);
+	}
+return before;
+}
+ 
+GtkWidget* NotifierGtk2::UnicodeLabelOf(string s)
+{
+GtkWidget*lab;
+
+bool needs_encoding = false, last_was_eq = false, last_was_qm = false;
+string data_raw;
+char* data=NULL;
+string encoding;
+unsigned int i;
+int begin_encoding=-1,end_data=-1, begin_data=-1, end_encoding=-1;
+char enc = '\0';
+string before, after;
+
+for (i = 0 ; i < s.size() ; i++) {
+	char cur = s.at(i);
+	
+	if (cur == '?' && begin_data == -1 && begin_encoding !=-1 &&
+		end_encoding != -1 && end_data == -1 && ! last_was_eq && 
+		!last_was_qm)
+		begin_data = i+1;
+	if (cur == '?' && begin_encoding != -1 && end_encoding==-1 &&
+		!last_was_eq) 
+		end_encoding = i;
+
+	if ( (cur == 'b' || cur == 'B' || cur == 'q' || cur == 'q') &&
+		begin_data == -1 && begin_encoding !=-1 &&
+		end_encoding != -1 && end_data == -1)
+		enc = tolower(cur);	
+
+	if (cur == '=') last_was_eq = true;
+	if (cur == '?') last_was_qm = true;
+	if (cur == '?' && last_was_eq ) begin_encoding = i+1;
+	if (cur == '=' && last_was_qm ) end_data = i-1;
+
+	
+	if (cur != '=' && last_was_eq ) last_was_eq = false;
+	if (cur != '?' && last_was_qm ) last_was_qm = false;
+}
+
+if ( enc != '\0' &&
+     begin_encoding != -1 &&
+     end_encoding != -1 &&
+     begin_data != -1 &&
+     end_data != -1) {
+
+	data_raw =  s.substr( begin_data, end_data - begin_data);
+	encoding = s.substr(begin_encoding, end_encoding - begin_encoding);
+	
+	if (enc == 'b') {
+		data = (char*)malloc ( sizeof(char) * data_raw.size() / 4 * 3);
+		base64_decode(data_raw.c_str(),data);
+	} else
+		data = unquote(data_raw.c_str());
+	
+	before = s.substr(0,begin_encoding-2);
+	after = s.substr(end_data+2);
+
+	// we have to replace <,>
+	before = remove_gt_le(before);
+	after = remove_gt_le(after);
+
+	needs_encoding = true;
+}
+
+//render it
+lab = gtk_label_new(s.c_str());
+if (needs_encoding) {
+	gtk_label_set_markup(GTK_LABEL(lab),
+		(before + string("<span lang=\"") + encoding + 
+		 string("\" >") + 
+		 string(data) + string("</span>") + after).c_str());
+	::free(data);
+}
+
+return lab;
+}
+
 GtkWidget* NotifierGtk2::CreatePreview(UInfo*i,NotifierGtk2::Box *x)
 {
 GtkWidget* ret;
@@ -418,8 +520,8 @@ if (!i->preview){
 		snprintf(str,5,"%lu",J-j+2);
 
 		l1 = gtk_label_new(str);
-		l2 = gtk_label_new(i->From.c_str());
-		l3 = gtk_label_new(i->Subject.c_str());
+		l2 = UnicodeLabelOf(i->From);
+		l3 = UnicodeLabelOf(i->Subject);
 		
 		gtk_misc_set_alignment (GTK_MISC (l1), 1.0, 0.5);
 		gtk_misc_set_alignment (GTK_MISC (l2), 0.0, 0.5);
