@@ -1,0 +1,48 @@
+                              [*] ebiff [*]
+
+* What is this? *
+
+  ebiff is a mail notification agent, like biff or Xbiff, for the GNU/Linux
+  operating systems (and other posix operating systems).
+
+* What the e of ebiff stands for? *
+
+  ebiff is an extensible mail notification agent, it is also an enhanced biff
+  clone.
+
+* What is ebiff able to do? *
+
+  ebiff is plugin based, so its capabilityes are only related to the plugins
+  already written. There are two types of plugins: mailbox and notifier.
+  
+  These are the mailbox plugins:
+    maildir
+      Allows ebiff to access mailboxes in maildir format
+    mbox
+      Allows ebiff to access mailboxes in mbox format
+      
+  These are the notifier plugins:
+    gtk2
+      This plugin shows the mailbox status in one or more windows, like gbuffy,
+      but is really more customizable.
+    xosd
+      This notifier prints an on-screen notice.
+    sox
+      You can associate a sound with a mailbox status change.
+    flite
+      Flite can synthesize a voice that says what you want when a mail arrives,
+      like "you got new mail"
+    stdout
+      This is a simple and debugging purpose only plugin, it will be replaced
+      by an utmp plugin soon.
+
+* What is ebiff development status? *
+
+  ebiff is beta, not really tested, but works fine for me. Please submit bug
+  reports and suggestions to the author.
+  
+* Where can I find some documentation about ebiff's configuration file? *
+  
+  The manual is included in the binary distributions an is
+  generated automatically if you compile it from the sources.
+  
