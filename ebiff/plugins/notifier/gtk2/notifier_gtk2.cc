@@ -426,6 +426,8 @@ char str[5];
 string snumber = i->spannumber;
 string label;
 
+snprintf(str,5,"%d",x->content.size());
+
 label = string(str);
 
 if (!i->preview){
@@ -443,7 +445,7 @@ if (!i->preview){
 	lab = gtk_label_new(label.c_str());
 	gtk_label_set_markup(GTK_LABEL(lab),
 		(string("<span ") + escape_xml(snumber) + string(" >") + 
-		 escape_xml(str) + string("</span>")).c_str());
+		 escape_xml(label.c_str()) + string("</span>")).c_str());
 	ret = gtk_toggle_button_new();
 	gtk_container_add(GTK_CONTAINER(ret),lab);
 	gtk_widget_show(lab);
