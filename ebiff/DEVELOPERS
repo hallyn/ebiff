@@ -1,0 +1,32 @@
+                            Developer informations
+                           
+* Compilation * 
+ 
+ ebiff uses simple makefile to build. The only strange thing is that it
+ runs contrib/checkplugins.sh to decide which plugins it should build.
+ So you may hack on a this simple script to make ebiff compile your new
+ plugin. The script is really simple, no explanation needed.
+
+* A new plugin *
+ 
+ The best way is to copy the simplest plugin on the same type and change it.
+ stdout or sox are good examples. Use the sox multithreaded approach if the 
+ notification action may stop ebiff for a long time. Notifier::Notify() 
+ should be a "fast" function.
+
+* Steps for the new plugin *
+
+ - Copy the old plugin, change all names (plugin name should be a simple one,
+   no - or / or spaces).
+ - hack checkplugins.sh
+ - edit grammar.lua (really simple)
+ - edit parser.cc (The switch statement at the end of the file.
+ - make
+ - edit debian/control, debian/ebiff-??-yourplugin.install
+ - test it a bit.
+ - send me the patch from the most recent upstream version.
+
+* Problems *
+
+ Send me a mail at <gareuselesinge@users.sourceforge.net>
+
