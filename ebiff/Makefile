@@ -71,7 +71,7 @@ release:
 	mv tmp/ebiff_$(VERSION).dsc dist-deb/ebiff
 	mv tmp/ebiff_$(VERSION)_$(ARCH).changes dist-deb/ebiff
 	mv tmp/ebiff_$(VERSION)_$(ARCH).deb dist-deb/ebiff
-	mv tmp/ebiff-notifyer*_$(ARCH).deb dist-deb/ebiff
+	mv tmp/ebiff-notifier*_$(ARCH).deb dist-deb/ebiff
 	mv tmp/ebiff-mailbox*_$(ARCH).deb dist-deb/ebiff
 	touch dist-deb/ebiff/overridefile
 	cd dist-deb/ebiff/;dpkg-scanpackages . overridefile > Packages

@@ -59,7 +59,7 @@
 -- 
 -- Example: find_maildir(os.getenv("HOME").."/Mail")
 -- 
-function find_maildir(dir)
+function find_maildir(dir,notdeep)
 	
 	local function find_maildir_aux(dir,rc)
 		--print("Examining "..dir)
@@ -79,7 +79,7 @@ function find_maildir(dir)
 				   t2["tmp"] ~= nil then
 				   	--print("Got "..dir.."/"..d)
 					table.insert(rc,dir.."/"..d)
-				else
+				elseif not notdeep then
 					find_maildir_aux(dir.."/"..d,rc)
 				end
 			end
@@ -322,7 +322,7 @@ end
 -- Returns the mailbox that has the specifyed name
 --
 -- If you create a table of mailboxes, for example with maildirs2mailboxes,
--- you may bind a notifyer to only one of them.
+-- you may bind a notifier to only one of them.
 -- 
 -- You could even create 2 mailbox pointing to the same path, but this would
 -- use more memory... so this function is not so bad...

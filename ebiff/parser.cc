@@ -28,7 +28,7 @@ extern "C" {
 
 #include "relation.h"
 #include "mailbox.h"
-#include "notifyer.h"
+#include "notifier.h"
 #include "pluginregistry.h"
 
 #include "parser.c"
@@ -58,7 +58,7 @@ list<Relation*> *parse_config(char* file)
 int rc;
 lua_State* L = lua_open();
 map<double,Mailbox*> m_mailbox;
-map<double,Notifyer*> m_notifyer;
+map<double,Notifier*> m_notifier;
 list<Relation*> *relations = new list<Relation*>();
 
 luaopen_base(L);
@@ -138,32 +138,32 @@ while (lua_next(L,-2) != 0)
 	m_mailbox[MAILBOX_CAST(&b).id]->SetName(MAILBOX_CAST(&b).name);
 	m_mailbox[MAILBOX_CAST(&b).id]->SetCommand(MAILBOX_CAST(&b).command);
 	
-	if( m_notifyer[NOTIFYER_CAST(&b).id] == NULL)
+	if( m_notifier[NOTIFIER_CAST(&b).id] == NULL)
 		{
 
-		Notifyer* n=NULL;
+		Notifier* n=NULL;
 	
-		switch(NOTIFYER_CAST(&b).driver_content)
+		switch(NOTIFIER_CAST(&b).driver_content)
 			{
-			case NOTIFYER_DRIVER_CONTENT_STDOUT: {
-				n=PluginRegistry::notifyer_plugin_new("stdout");
+			case NOTIFIER_DRIVER_CONTENT_STDOUT: {
+				n=PluginRegistry::notifier_plugin_new("stdout");
 				if(n==NULL)
 					break;
 
 				n->SetBool("printall",STDOUT_CAST(&b).printall);
 				
 				}break;
-			case NOTIFYER_DRIVER_CONTENT_SOX: {
+			case NOTIFIER_DRIVER_CONTENT_SOX: {
 				n=PluginRegistry::
-					notifyer_plugin_new("sox");
+					notifier_plugin_new("sox");
 				if(n==NULL)
 					break;
 
 				n->SetString("file",SOX_CAST(&b).file);
 				
 				}break;
-			case NOTIFYER_DRIVER_CONTENT_FLITE: {
-				n=PluginRegistry::notifyer_plugin_new("flite");
+			case NOTIFIER_DRIVER_CONTENT_FLITE: {
+				n=PluginRegistry::notifier_plugin_new("flite");
 				if(n==NULL)
 					break;
 
@@ -172,8 +172,8 @@ while (lua_next(L,-2) != 0)
 				n->SetString("zero",FLITE_CAST(&b).zero);
 
 				}break;				     
-			case NOTIFYER_DRIVER_CONTENT_GTK2: {
-				n = PluginRegistry::notifyer_plugin_new("gtk2");
+			case NOTIFIER_DRIVER_CONTENT_GTK2: {
+				n = PluginRegistry::notifier_plugin_new("gtk2");
 				if(n==NULL)
 					break;
 
@@ -182,8 +182,8 @@ while (lua_next(L,-2) != 0)
 				n->SetBool("preview",GTK2_CAST(&b).preview);
 				
 				}break;
-			case NOTIFYER_DRIVER_CONTENT_XOSD: {
-				n = PluginRegistry::notifyer_plugin_new("xosd");
+			case NOTIFIER_DRIVER_CONTENT_XOSD: {
+				n = PluginRegistry::notifier_plugin_new("xosd");
 				if(n==NULL)
 					break;
 
@@ -204,10 +204,10 @@ while (lua_next(L,-2) != 0)
 				}break;
 				   
 			}
-		m_notifyer[NOTIFYER_CAST(&b).id] = n;
+		m_notifier[NOTIFIER_CAST(&b).id] = n;
 		}
 
-	if(m_notifyer[NOTIFYER_CAST(&b).id] == NULL)
+	if(m_notifier[NOTIFIER_CAST(&b).id] == NULL)
 		{
 		// FIX consiuder freeing the mailbox plugin,
 		// but remember that you must use the dlopen hack,
@@ -218,7 +218,7 @@ while (lua_next(L,-2) != 0)
 		}
 	
 	relations->push_back(new Relation(m_mailbox[MAILBOX_CAST(&b).id],
-			m_notifyer[NOTIFYER_CAST(&b).id],
+			m_notifier[NOTIFIER_CAST(&b).id],
 			(time_t)MAILBOX_CAST(&b).interval));
 	
 	lua_pop(L,1);

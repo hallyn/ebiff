@@ -31,7 +31,7 @@ interval = 0;
  *
  *
  */ 
-Relation::Relation(Mailbox* b,Notifyer* n,time_t i)
+Relation::Relation(Mailbox* b,Notifier* n,time_t i)
 {
 box = b;
 nty = n;

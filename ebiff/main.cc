@@ -109,7 +109,7 @@ catch(MailboxException f)
 	fprintf(stderr,"EXCEPTION: %s\n",f.msg.c_str());
 	exit(1);
 	}
-catch(NotifyerException f)
+catch(NotifierException f)
 	{
 	fprintf(stderr,"EXCEPTION: %s\n",f.msg.c_str());
 	exit(1);

@@ -7,58 +7,58 @@ Standards-Version: 3.6.0
 
 Package: ebiff
 Architecture: any
-Depends: ${shlibs:Depends}, ebiff-notifyer, ebiff-mailbox
+Depends: ${shlibs:Depends}, ebiff-notifier, ebiff-mailbox
 Description: Enhanced biff
  This is plugin based biff clone. It clone only the idea of mail notification
  since it supports powerful plugin for both accessing multiple mailbox formats
  and notifyng the user in various ways.
 
-Package: ebiff-notifyer-gtk2
+Package: ebiff-notifier-gtk2
 Architecture: any
-Depends: ${shlibs:Depends}
-Provides: ebiff-notifyer
-Description: ebiff's gtk2 based notifyer
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's gtk2 based notifier
  This plugin provides a gbuffy like interface.
 
-Package: ebiff-notifyer-xosd
+Package: ebiff-notifier-xosd
 Architecture: any
-Depends: ${shlibs:Depends}
-Provides: ebiff-notifyer
-Description: ebiff's Xosd based notifyer
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's Xosd based notifier
  This plugin provides ebiff the capability of printing on screen display
  messages
 
-Package: ebiff-notifyer-sox
+Package: ebiff-notifier-sox
 Architecture: any
-Depends: ${shlibs:Depends}
-Provides: ebiff-notifyer
-Description: ebiff's sox audio notifyer
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's sox audio notifier
  This plugin plays a sound when new mail arrives
 
-Package: ebiff-notifyer-flite
+Package: ebiff-notifier-flite
 Architecture: any
-Depends: ${shlibs:Depends}
-Provides: ebiff-notifyer
-Description: ebiff's flite voice synthesis notifyer
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's flite voice synthesis notifier
  This plugin speaks a sentence when new mail arrives
 
-Package: ebiff-notifyer-stdout
+Package: ebiff-notifier-stdout
 Architecture: any
-Depends: ${shlibs:Depends}
-Provides: ebiff-notifyer
-Description: ebiff's stdout notifyer
+Depends: ${shlibs:Depends}, ebiff
+Provides: ebiff-notifier
+Description: ebiff's stdout notifier
  This plugin prints a simple message on stdout, not really interesting
 
 Package: ebiff-mailbox-mbox
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ebiff
 Provides: ebiff-mailbox
 Description: ebiff's mbox plugin
  This plugin allows ebiff to access mbox mailboxes
 
 Package: ebiff-mailbox-maildir
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ebiff
 Provides: ebiff-mailbox
 Description: ebiff's maildir plugin
  This plugin allows ebiff to access maildir mailboxes

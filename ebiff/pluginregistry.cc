@@ -22,7 +22,7 @@
 #define MAX(a,b) (((b)>(a))?(b):(a))
 
 map<string,void*> PluginRegistry::plugins_mailbox;
-map<string,void*> PluginRegistry::plugins_notifyer;
+map<string,void*> PluginRegistry::plugins_notifier;
 
 void PluginRegistry::load_mailbox_plugin(const char*name,new_mailbox_t**m,
 			delete_mailbox_t**d)
@@ -41,9 +41,10 @@ if( plugins_mailbox[string(name)] == NULL)
 	handle = dlopen(file,RTLD_GLOBAL|RTLD_NOW);
 	if(handle == NULL)
 		{
+		fprintf(stderr,"Unable to dlopen %s\n",dlerror());
 		snprintf(file,len,"%s/%slibebiff_mailbox_%s.so",pwd,
 			SO_DEVEL,name);
-		handle = dlopen(file,RTLD_GLOBAL|RTLD_NOW);
+		handle = dlopen(file,RTLD_GLOBAL|RTLD_LAZY);
 		if(handle == NULL)
 			{
 			fprintf(stderr,"Unable to dlopen %s\n",dlerror());
@@ -75,25 +76,26 @@ if(d != NULL)
 	}
 }
 
-void PluginRegistry::load_notifyer_plugin(const char*name,new_notifyer_t**m,
-			delete_notifyer_t**d)
+void PluginRegistry::load_notifier_plugin(const char*name,new_notifier_t**m,
+			delete_notifier_t**d)
 {
 const char* pwd = getenv("PWD");
 size_t len = 	MAX(strlen(SO_STD),strlen(pwd)+1+strlen(SO_DEVEL)) + 
-		18+ // "libebiff_notifyer_"
+		18+ // "libebiff_notifier_"
 		strlen(name)+
 		4; // ".so\0"
 
 char file[len];
 void* handle;
 
-if( plugins_notifyer[string(name)] == NULL)
+if( plugins_notifier[string(name)] == NULL)
 	{
-	snprintf(file,len,"%slibebiff_notifyer_%s.so",SO_STD,name);
-	handle = dlopen(file,RTLD_GLOBAL|RTLD_NOW);
+	snprintf(file,len,"%slibebiff_notifier_%s.so",SO_STD,name);
+	handle = dlopen(file,RTLD_GLOBAL|RTLD_LAZY);
 	if(handle == NULL)
 		{
-		snprintf(file,len,"%s/%slibebiff_notifyer_%s.so",
+		fprintf(stderr,"Unable to dlopen %s\n",dlerror());
+		snprintf(file,len,"%s/%slibebiff_notifier_%s.so",
 			pwd,SO_DEVEL,name);
 		handle = dlopen(file,RTLD_GLOBAL|RTLD_NOW);
 		if(handle == NULL)
@@ -103,13 +105,13 @@ if( plugins_notifyer[string(name)] == NULL)
 			}
 		}
 	fprintf(stderr,"Loaded %s\n",file);
-	plugins_notifyer[string(name)] = handle;
+	plugins_notifier[string(name)] = handle;
 	}
 
 if(m != NULL)
 	{
-	*m = (new_notifyer_t*)dlsym(plugins_notifyer[string(name)],
-		"new_notifyer"); 
+	*m = (new_notifier_t*)dlsym(plugins_notifier[string(name)],
+		"new_notifier"); 
 	
 	if( *m == NULL)
 		fprintf(stderr,"Unable to correctly load %s: %s\n",
@@ -118,8 +120,8 @@ if(m != NULL)
 
 if(d != NULL)
 	{
-	*d = (delete_notifyer_t*)dlsym(plugins_notifyer[string(name)],
-		"delete_notifyer"); 
+	*d = (delete_notifier_t*)dlsym(plugins_notifier[string(name)],
+		"delete_notifier"); 
 	
 	if( *d == NULL)
 		fprintf(stderr,"Unable to correctly load %s: %s\n",
@@ -136,11 +138,11 @@ load_mailbox_plugin(name,&n,NULL);
 return (n != NULL) ? n() : NULL;
 }
 
-Notifyer* PluginRegistry::notifyer_plugin_new(char* name)
+Notifier* PluginRegistry::notifier_plugin_new(char* name)
 {
-new_notifyer_t* n=NULL;
+new_notifier_t* n=NULL;
 
-load_notifyer_plugin(name,&n,NULL);
+load_notifier_plugin(name,&n,NULL);
 
 return (n != NULL) ? n() : NULL;
 }

@@ -87,18 +87,49 @@ is required</xsl:if></xsl:template>
   <head>
   <title>ebiff configuration file documentation</title>
   <style type="text/css">
-  TT {font-size:12pt;font-family:courier;}
-  I {font-size:12pt;font-family:helvetica;}
-  PRE {font-size:12pt;font-family:courier;
-  	border-style:solid;border-size:1;border-color:grey;
-	margin:10 10 10 10;padding:10 10 10 10;}
-  BODY {font-size:14pt;}
+  TT {font-size:14pt;font-family:courier;}
+  I {font-size:14pt;font-family:helvetica;}
+  PRE {font-size:13pt;font-family:courier;
+  	border-style:solid;border-width:1px;
+	margin:10 10 10 10;padding:10 10 10 10;
+	border-color:#d8ca00;
+	background-color:#fffdcf;}
+  body { 
+background-color: #fcfcfc;
+font-family: helvetica,sans-serif;
+font-size:15pt;
+margin-top:0px;
+margin-bottom:0px;
+margin-left:0px;
+margin-right:0px;
+}
+
+p {margin-left:10;}
+
   UL {list-style-type:disc;}
   UL UL {list-style-type:square;}
-  UL UL UL {list-style-type:disc;}
-  UL UL UL UL {list-style-type:square;}
-  UL UL UL UL UL {list-style-type:disc;}
-  H1 {text-align: center;}
+  UL UL UL {list-style-type:disc;
+border-style:none none none solid;
+border-width:1px;
+border-color:#9b30cf;
+background-color:#fddfff;}
+  UL UL UL UL {list-style-type:square;border-style:none;}
+  UL UL UL UL UL {list-style-type:disc;
+border-style:none none none solid;
+border-width:1px;
+border-color:#d8ca00;
+background-color:#fffabf;}
+  H1 {font-size: 24pt;
+color:#dfdff0;
+text-align:center;
+border-style:solid;
+border-width:1px;
+border-color:#dfdff0;
+background-color:#2f2ff0;
+margin-left:0px;
+margin-right:0px;
+margin-top:0px;
+}
   A  {color:DarkViolet;text-decoration: none}
   A:hover {color: Violet;background-color: DarkViolet;text-decoration: none;}
   A.nohover:hover {background-color: transparent;text-decoration: none;
@@ -111,6 +142,7 @@ is required</xsl:if></xsl:template>
   </head>
   <body>
     <h1>Configuration file documentation</h1>
+    <P>
     The only purpose of the configuration file is to say ebiff to
     check mailbox x for new mail and notify the user with y.<BR/>
     Supported mailbox drivers are: 
@@ -124,8 +156,8 @@ is required</xsl:if></xsl:template>
       <xsl:if test="position() &lt; last() ">, </xsl:if>
     </xsl:for-each>.
     <BR/>
-    Supported notifyer drivers are: 
-    <xsl:for-each select="/relation/field[name/text()='notifyer']/allowed/subitem/notifyer/field/allowed/subitem/*">
+    Supported notifier drivers are: 
+    <xsl:for-each select="/relation/field[name/text()='notifier']/allowed/subitem/notifier/field/allowed/subitem/*">
       <A>
         <xsl:attribute name="HREF">
           #<xsl:value-of select="name(.)"/>
@@ -135,14 +167,15 @@ is required</xsl:if></xsl:template>
       <xsl:if test="position() &lt; last() ">, </xsl:if>
     </xsl:for-each>.
     <BR/>
-    The function call <TT>bind(mailbox,notifyer)</TT>
+    The function call <TT>bind(mailbox,notifier)</TT>
     creates a new <B>relation</B> , and adds it to the relation 
     list used by ebiff.<BR/>
     An alternative way of calling <B>bind</B> is to pass a mailbox list or
-    a notifyer list instead of a single element. The right syntax to do this 
+    a notifier list instead of a single element. The right syntax to do this 
     is <TT>bind({box1,box2,..,boxn},{not1,not2,...,notm})</TT>.<BR/>
     This is a short example of a configuration file (a longer and more complex
     example is in <TT>/usr/share/doc/ebiff/</TT> in the debian system):
+    </P>
 <pre>
 --
 -- This is a sample configuration file for ebiff
@@ -160,9 +193,9 @@ b_inbox = new{
 	interval=10;
 	}
 	
--- create a gtk2 notifyer
+-- create a gtk2 notifier
 n_gtk2 = new{
-	type = "notifyer";
+	type = "notifier";
 	driver= {
 		type="gtk2";
 		position="right";
@@ -170,9 +203,9 @@ n_gtk2 = new{
 		}
 	}
 
--- create a xosd notifyer
+-- create a xosd notifier
 n_osd = new{
-	type = "notifyer";
+	type = "notifier";
 	driver= {
 		type="xosd";
 		}
@@ -181,6 +214,7 @@ n_osd = new{
 -- bind them
 bind(b_inbox,{n_gtk2,n_osd})
 </pre>
+  <P>
     In the example the mailbox <TT>b_inbox</TT> will be inspected every 
     10 seconds and eventually both <TT>n_gtk2</TT> and <TT>n_osd</TT>
     will be used to notify the user.<BR/>
@@ -192,6 +226,7 @@ bind(b_inbox,{n_gtk2,n_osd})
     <A CLASS="normal" HREF="http://www.lua.org">LUA</A> script 
     (see <A CLASS="normal" HREF="http://lua-users.org">lua-users</A> for a 
     tutorial). Some syntax peculiarity follow:
+    </P>
 <UL>
 <LI>The following sentences are the same for LUA:
 
@@ -230,15 +265,17 @@ non alphanumeric characters:
 </OL>
 </LI>
 </UL>
+  <P>
     The last important thing you must know is tgat you must use the 
     <TT>new</TT> function (ok, in the example it has no <TT>()</TT>, but
-    it is automatically understood by LUA) to create a new mailbox or notifyer
+    it is automatically understood by LUA) to create a new mailbox or notifier
     instance (calling new also adds the <TT>id</TT> field, this is why it is a
     required field but not used in the sample configuration).<BR/>
     A <B>relation</B> has the following fields (notice that the tables 
-    <B>mailbox</B> and <B>notifyer</B> that must be passed to <TT>bind</TT>
+    <B>mailbox</B> and <B>notifier</B> that must be passed to <TT>bind</TT>
     are subtables of <B>relation</B> and theys fields are listed here):
     <xsl:apply-templates select="relation"/>
+    </P>
     <HR/>
     </body>
   </html>

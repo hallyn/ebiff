@@ -14,9 +14,9 @@
  ******************************************************************************/
 
 
-#include "notifyer_exception.h"
+#include "notifier_exception.h"
 
-NotifyerException::NotifyerException(string message)
+NotifierException::NotifierException(string message)
 {
 msg = message;
 }

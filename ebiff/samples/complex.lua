@@ -8,11 +8,11 @@ dofile("samples/functions.lua")
 -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == --
 
 -- -------------------------------------------------------------------------- --
--- create a gtk2 notifyer
+-- create a gtk2 notifier
 --
 
 gtk2 = new {
-	type="notifyer";
+	type="notifier";
 	driver={
 		type="gtk2";
 		preview=true;
@@ -21,26 +21,50 @@ gtk2 = new {
 		};
 }
 
--- -------------------------------------------------------------------------- --
--- create a xosd notifyer
---
-
-xosd = new {
-	type="notifyer";
+gtk2_man = new {
+	type="notifier";
 	driver={
-		type="xosd";
-		outlineoffset=0;
-		shoadowoffset=3;
-		timeout=7;
+		type="gtk2";
+		preview=false;
+		showall=false;
+		position="managed";
+		};
+}
+
+gtk2_top = new {
+	type="notifier";
+	driver={
+		type="gtk2";
+		preview=true;
+		showall=false;
+		position="top";
 		};
 }
 
 -- -------------------------------------------------------------------------- --
--- create a sox notifyer
+-- create a xosd notifier
+--
+
+xosd = new {
+	type="notifier";
+	driver={
+		type="xosd";
+		outlineoffset=0;
+		shoadowoffset=3;
+		color="#00FF00";
+		timeout=60;
+		align="right";
+		pos="bottom";
+		voffset=100;
+		};
+}
+
+-- -------------------------------------------------------------------------- --
+-- create a sox notifier
 --
 
 sox = new {
-	type="notifyer";
+	type="notifier";
 	driver={
 		type="sox";
 		file="/usr/share/licq/sounds/fun/Online.wav";
@@ -88,15 +112,17 @@ mbox = new {
 --	end)
 
 -- -------------------------------------------------------------------------- --
--- bind all the mailboxes with the gtk2 notifyer.
+-- bind all the mailboxes with the gtk2 notifier.
 --
 
 bind(mailboxes , gtk2)
+bind(mailboxes , gtk2_man)
+bind(mailboxes , gtk2_top)
 bind(mbox , gtk2) 
 bind(mbox , sox) 
 
 -- -------------------------------------------------------------------------- --
--- bind "amici" maildir with the xosd notifyer.
+-- bind "amici" maildir with the xosd notifier.
 --
 
 bind(selectmailbox(mailboxes,"inbox"),xosd)

@@ -11,9 +11,9 @@ what_a_mailbox = new {
         interval=5;
 }
 
--- create the gtk2 notifyer
-notifyer_1 = new {
-	type="notifyer";
+-- create the gtk2 notifier
+notifier_1 = new {
+	type="notifier";
         driver={
                 type="gtk2";
                 position="managed";
@@ -21,4 +21,4 @@ notifyer_1 = new {
 }
 
 -- bind them together
-bind(what_a_mailbox,notifyer_1)
+bind(what_a_mailbox,notifier_1)

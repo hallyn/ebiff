@@ -81,7 +81,7 @@ binary-arch: build install
 	dh_installman ebiff.1
 	dh_link
 	dh_strip
-	dh_compress
+	dh_compress -X.lua
 	dh_fixperms
 #	dh_perl
 #	dh_python

@@ -15,19 +15,31 @@
 /******************************************************************************/
 
 
-#ifndef NOTIFYER_EXCEPTION_H
-#define NOTIFYER_EXCEPTION_H
+#ifndef NOTIFIER_H
+#define NOTIFIER_H
 
-#include <string>
 
-using namespace std;
+#include "reduced_mailbox.h"
+#include "notifier_exception.h"
 
-class NotifyerException 
+class Notifier
 	{
 public:
-	NotifyerException(string message);	
-
-	string msg;		
+	virtual void SetString(string name, string value) 
+			throw(NotifierException)= 0;
+	virtual void SetBool(string name, bool value) 
+			throw(NotifierException) = 0;
+	virtual void SetNumber(string name, double value) 
+			throw(NotifierException) = 0;
+		
+	virtual void Notify(ReducedMailbox* m) = 0;
+	
+	virtual ~Notifier() {};
 	};
+
+//dlopen stuff
+typedef Notifier* new_notifier_t();
+typedef void delete_notifier_t(Notifier*);
+
 
 #endif

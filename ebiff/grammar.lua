@@ -20,7 +20,7 @@ function bind(b,n)--,i)
 		if not rc then error(err) end
 	end
 	for _,m in ipairs(n) do
-		rc,err = check_table(m,"notifyer")
+		rc,err = check_table(m,"notifier")
 		if not rc then error(err) end
 	end
 
@@ -28,7 +28,7 @@ function bind(b,n)--,i)
 	for _,m in ipairs(b) do
 		for _,v in ipairs(n) do
 			local tmp = {mailbox=m,
-				notifyer=v,
+				notifier=v,
 				type="relation"
 				--,interval=i
 				}
@@ -127,8 +127,8 @@ mailbox_comment={
 	id="Forget this, it is automatically added by new()",
 	type="A way to access a mailbox",
 	interval="Delay between two mailbox inspection, in seconds",
-	command="The command to execute (may be requested by the notifyer plugin to show the content of the mailbox, for example 'mutt -f mbox')",
-	name="The name that will be used by the notifyer as the mailbox identifyer"
+	command="The command to execute (may be requested by the notifier plugin to show the content of the mailbox, for example 'mutt -f mbox')",
+	name="The name that will be used by the notifier as the mailbox identifyer"
 	}	
 	-- ------------------------------------------------------------------ --
 	-- mailbox::maildir definitions
@@ -152,20 +152,20 @@ mailbox_comment={
 		newonly="List only new messages",
 		type="Mbox type mailbox, usually ~/mbox is an mbox"}
 -- -------------------------------------------------------------------------- --
--- notifyer definitions
+-- notifier definitions
 --
-notifyer_types = { type="string",driver="table",id="number"}
-notifyer_must = {"type","driver","id"}
-notifyer_default = {}
-notifyer_allowed = {
-	type=onestrof("notifyer"),
+notifier_types = { type="string",driver="table",id="number"}
+notifier_must = {"type","driver","id"}
+notifier_default = {}
+notifier_allowed = {
+	type=onestrof("notifier"),
 	driver=onetblof("stdout","gtk2","xosd","flite","sox")}
-notifyer_comment={
+notifier_comment={
 	id="Forget this, it is automatically added by new()",
 	type="A way to notify the user"
 	}	
 	-- ------------------------------------------------------------------ --
-	-- notifyer::stdout definitions
+	-- notifier::stdout definitions
 	--
 	stdout_types = { type="string",printall="boolean"}
 	stdout_must = {"type"}
@@ -176,7 +176,7 @@ notifyer_comment={
 		type="Simple print on stdout"
 		}
 	-- ------------------------------------------------------------------ --
-	-- notifyer::sox definitions
+	-- notifier::sox definitions
 	--
 	sox_types = { type="string",file="string"}
 	sox_must = {"type","file"}
@@ -188,7 +188,7 @@ notifyer_comment={
 		}
 	
 	-- ------------------------------------------------------------------ --
-	-- notifyer::flite definitions
+	-- notifier::flite definitions
 	--
 	flite_types = { type="string",one="string",zero="string",more="string"}
 	flite_must = {"type"}
@@ -204,7 +204,7 @@ notifyer_comment={
 		type="Voice-synthesize plugin"}
 	
 	-- ------------------------------------------------------------------ --
-	-- notifyer::gtk2 definitions
+	-- notifier::gtk2 definitions
 	--
 	gtk2_types = { type="string",
 		position="string",
@@ -221,7 +221,7 @@ notifyer_comment={
 		preview="Show a button to show the mailbox preview",
 		type="Gbuffy like plugin"}
 	-- ------------------------------------------------------------------ --
-	-- notifyer::xosd definitions
+	-- notifier::xosd definitions
 	--
 	xosd_types = { type="string",
 		pos="string",
@@ -271,11 +271,11 @@ notifyer_comment={
 --<==========================================================================>--
 
 relation_types = {mailbox="table",
-		notifyer="table",
+		notifier="table",
 		type="string"}
-relation_must = {"mailbox","notifyer","type"}
+relation_must = {"mailbox","notifier","type"}
 relation_default = {}
-relation_allowed = {mailbox=onetblof("mailbox"),notifyer=onetblof("notifyer"),
+relation_allowed = {mailbox=onetblof("mailbox"),notifier=onetblof("notifier"),
 	type=onestrof("relation")}
 relation_comment={}
 

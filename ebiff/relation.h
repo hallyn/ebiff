@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "mailbox.h"
-#include "notifyer.h"
+#include "notifier.h"
 
 #include <iostream>
 
@@ -29,11 +29,11 @@ class Relation
 	{
 public:
 	Mailbox* box;
-	Notifyer* nty;
+	Notifier* nty;
 	time_t interval, saved_interval;
 	
 	Relation();
-	Relation(Mailbox* b,Notifyer* n,time_t i);
+	Relation(Mailbox* b,Notifier* n,time_t i);
 	~Relation();
 
 	static bool Relation_lt(const Relation *r1,const Relation *r2);

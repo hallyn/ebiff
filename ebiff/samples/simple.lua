@@ -14,18 +14,18 @@ what_a_mailbox = new {
         interval=5;
 }
 
--- create the gtk2 notifyer
-notifyer_1 = new {
-	type="notifyer";
+-- create the gtk2 notifier
+notifier_1 = new {
+	type="notifier";
         driver={
                 type="gtk2";
                 position="managed";
                 };
 }
 
--- create the xosd notifyer
-notifyer_2 = new {
-	type="notifyer";
+-- create the xosd notifier
+notifier_2 = new {
+	type="notifier";
         driver={
                 type="xosd";
                 };
@@ -33,9 +33,9 @@ notifyer_2 = new {
 
 
 -- bind them together
-bind(what_a_mailbox,notifyer_1)
-bind(what_a_mailbox,notifyer_2)
+bind(what_a_mailbox,notifier_1)
+bind(what_a_mailbox,notifier_2)
 
 -- this line is the same as the 2 before
---bind(what_a_mailbox,{notifyer_1,notifyer_2})
+--bind(what_a_mailbox,{notifier_1,notifier_2})
 
