@@ -153,13 +153,13 @@ while (lua_next(L,-2) != 0)
 				n->SetBool("printall",STDOUT_CAST(&b).printall);
 				
 				}break;
-			case NOTIFYER_DRIVER_CONTENT_SDLAUDIO: {
+			case NOTIFYER_DRIVER_CONTENT_SOX: {
 				n=PluginRegistry::
-					notifyer_plugin_new("sdlaudio");
+					notifyer_plugin_new("sox");
 				if(n==NULL)
 					break;
 
-				n->SetString("file",SDLAUDIO_CAST(&b).file);
+				n->SetString("file",SOX_CAST(&b).file);
 				
 				}break;
 			case NOTIFYER_DRIVER_CONTENT_FLITE: {

@@ -2,7 +2,7 @@ Source: ebiff
 Section: mail
 Priority: optional
 Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
-Build-Depends: debhelper (>= 4.0.0), flite1-dev, libxosd-dev, libsdl1.2-dev, libgtk2.0-dev, liblualib50-dev, liblua50-dev, lua50, xsltproc
+Build-Depends: debhelper (>= 4.0.0), flite1-dev, libxosd-dev, libgtk2.0-dev, liblualib50-dev, liblua50-dev, lua50, xsltproc
 Standards-Version: 3.6.0
 
 Package: ebiff
@@ -28,11 +28,11 @@ Description: ebiff's Xosd based notifyer
  This plugin provides ebiff the capability of printing on screen display
  messages
 
-Package: ebiff-notifyer-sdlaudio
+Package: ebiff-notifyer-sox
 Architecture: any
 Depends: ${shlibs:Depends}
 Provides: ebiff-notifyer
-Description: ebiff's SDL audio notifyer
+Description: ebiff's sox audio notifyer
  This plugin plays a sound when new mail arrives
 
 Package: ebiff-notifyer-flite

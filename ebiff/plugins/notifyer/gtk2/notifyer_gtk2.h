@@ -33,41 +33,84 @@ class NotifyerGtk2: public Notifyer
 	{
 protected:
 
-	// this data duplication is orrible, but avoids concurrency problems.
-	class WInfo
-		{
+	// Plugin staus
+	class Status {
 		public:
-		class Box
-			{
+			
+		// things that must be kept of a mailbox
+		class BoxInfo {
 			public:
-			class Mail
-				{
-				public:
-				string From,Subject,Uid;
-				Mail(string From,string Subject,string Uid);
-				};
-			list<Mail> content;
-			Box(ReducedMailbox*m);
-			Box();
-			};
-		map<ReducedMailbox*,Box> boxes;
+			int position;
+
+			BoxInfo();
+		};
+		
+		
+		// status variables
+		map<ReducedMailbox*,BoxInfo> boxes;
 		GtkWidget *window;
 		string position;
 		bool showall;
 		bool preview;
 		};
+
+	// the data structure passed to the thread to represent mailbox status
+	class Box {
+		public:
+		
+		class Mail {
+			public:
+			string From,Subject,Uid;
+			Mail(string From,string Subject,string Uid);
+		};
 	
-	WInfo status;
-	WInfo* UpdateStatus(ReducedMailbox* m);
+		list<Mail> content;
+
+		string name;
+		string command;
+
+		Box(ReducedMailbox*m);
+	};
+
+	// Update Info for the Drawing Thread
+	class UInfo {
+		public:
+		// the content
+		Box* mailbox;
+		
+		// the position in the table
+		Status::BoxInfo &info;
+			
+		// the root widget
+		GtkWidget *window;
+
+		// some options
+		string position;
+		bool showall;
+		bool preview;
+
+		UInfo(Box*,Status::BoxInfo&,GtkWidget *,string,bool,bool);
+		~UInfo();
+	};
 	
-	static queue<WInfo*> requests;
+	// The main status
+	Status status;
+	
+	// create the object to enqueue for updation
+	UInfo* UpdateStatus(ReducedMailbox* m);
+	
+	// Global datas
+	static queue<UInfo*> requests;
 	static GThread* refresher;
 	static GStaticMutex requests_mutex;
+	
+	// functions for the thread
 	static gpointer thread(gpointer data);
-	static void UpdateWindow(WInfo* i);
-	static void PositionWindow(WInfo* i);
-	static GtkWidget* CreatePreview(WInfo*i,
-		map<ReducedMailbox*,NotifyerGtk2::WInfo::Box>::iterator x);
+	static void UpdateWindow(UInfo* i);
+	static void PositionWindow(UInfo* i);
+	static GtkWidget* CreatePreview(UInfo*i,NotifyerGtk2::Box *x);
+
+	// gtk thread stuff
 	static gboolean main_quit(gpointer);
 	static void execute(GtkButton *button,gpointer user_data);
 	static void show(GtkButton *button,gpointer user_data);
@@ -75,6 +118,7 @@ protected:
 	static bool hide_and_toggle(GtkWidget *w,
 			GdkEvent *event,gpointer user_data);
 	static bool destroy(GtkWidget *w,gpointer user_data);
+	static bool free(GtkWidget *w,gpointer user_data);
 public:
 	void SetString(string name, string value) throw(NotifyerException);
 	void SetBool(string name, bool value) throw(NotifyerException);

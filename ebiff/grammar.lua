@@ -159,7 +159,7 @@ notifyer_must = {"type","driver","id"}
 notifyer_default = {}
 notifyer_allowed = {
 	type=onestrof("notifyer"),
-	driver=onetblof("stdout","gtk2","xosd","flite","sdlaudio")}
+	driver=onetblof("stdout","gtk2","xosd","flite","sox")}
 notifyer_comment={
 	id="Forget this, it is automatically added by new()",
 	type="A way to notify the user"
@@ -176,13 +176,13 @@ notifyer_comment={
 		type="Simple print on stdout"
 		}
 	-- ------------------------------------------------------------------ --
-	-- notifyer::sdl-audio definitions
+	-- notifyer::sox definitions
 	--
-	sdlaudio_types = { type="string",file="string"}
-	sdlaudio_must = {"type","file"}
-	sdlaudio_default = {}
-	sdlaudio_allowed = {type=onestrof("sdlaudio")}
-	sdlaudio_comment={
+	sox_types = { type="string",file="string"}
+	sox_must = {"type","file"}
+	sox_default = {}
+	sox_allowed = {type=onestrof("sox")}
+	sox_comment={
 		file="The wav file to play",
 		type="Plays a sound to notify"
 		}

@@ -19,7 +19,7 @@
 #include "notifyer_gtk2.h"
 
 GThread* NotifyerGtk2::refresher = NULL;
-queue<NotifyerGtk2::WInfo*> NotifyerGtk2::requests;
+queue<NotifyerGtk2::UInfo*> NotifyerGtk2::requests;
 GStaticMutex NotifyerGtk2::requests_mutex = G_STATIC_MUTEX_INIT;
 
 /*******************************************************************************
@@ -103,7 +103,7 @@ if(refresher == NULL)
  *
  *
  */
-NotifyerGtk2::WInfo::Box::Mail::Mail(string F,string S,string U)
+NotifyerGtk2::Box::Mail::Mail(string F,string S,string U)
 {
 From = F;
 Subject = S;
@@ -114,12 +114,16 @@ Uid = U;
  *
  *
  */
-NotifyerGtk2::WInfo* NotifyerGtk2::UpdateStatus(ReducedMailbox* m)
+NotifyerGtk2::UInfo* NotifyerGtk2::UpdateStatus(ReducedMailbox* m)
 {
-status.boxes[m] = NotifyerGtk2::WInfo::Box(m);
-
 // copy current status on i
-WInfo* i = new WInfo(status);
+UInfo* i = new UInfo(
+	new Box(m),
+	status.boxes[m],
+	status.window,
+	status.position,
+	status.showall,
+	status.preview);
 
 return i;
 }
@@ -128,20 +132,54 @@ return i;
  *
  *
  */
-NotifyerGtk2::WInfo::Box::Box(ReducedMailbox*m)
+NotifyerGtk2::Box::Box(ReducedMailbox*m)
 {
 long unsigned int n = m->CountNew();
 
 for(long unsigned int i=0 ; i < n ; i++)
 	content.push_back(
 		Mail(m->GetNewFrom(i),m->GetNewSubject(i),m->GetNewUid(i)));
+
+name = m->GetName();
+command = m->GetCommand();
 }
 
 /*******************************************************************************
  *
  *
  */
-NotifyerGtk2::WInfo::Box::Box() {};
+NotifyerGtk2::Status::BoxInfo::BoxInfo()
+{
+position = -1;
+}
+
+/*******************************************************************************
+ *
+ *
+ */
+NotifyerGtk2::UInfo::UInfo(Box*a,Status::BoxInfo &b,
+	GtkWidget *c,string d,bool e,bool f):
+info(b)
+{
+mailbox = a;
+window = c;
+position = d;
+showall = e;
+preview = f;
+}
+
+/*******************************************************************************
+ *
+ *
+ */
+NotifyerGtk2::UInfo::~UInfo()
+{
+delete mailbox;
+}
+/*******************************************************************************
+ *
+ *
+ */
 
 gboolean NotifyerGtk2::main_quit(gpointer)
 {
@@ -155,7 +193,7 @@ return TRUE;
  *
  *
  */
-void NotifyerGtk2::PositionWindow(WInfo* i)
+void NotifyerGtk2::PositionWindow(UInfo* i)
 {
 GtkRequisition	req;
 int wid = gdk_screen_width();
@@ -217,7 +255,7 @@ while(true)
 		{
 		// etract the request
 		g_static_mutex_lock(&requests_mutex); //++
-		WInfo* i = requests.front();
+		UInfo* i = requests.front();
 		requests.pop();
 		g_static_mutex_unlock(&requests_mutex); //--
 		
@@ -237,6 +275,8 @@ while(true)
 				
 		gtk_widget_set_sensitive(i->window,TRUE);
 		gtk_widget_show(i->window);
+
+		delete i;
 		}
 	}
 return NULL;
@@ -286,19 +326,19 @@ return TRUE;
  *
  */
 
-GtkWidget* NotifyerGtk2::CreatePreview(WInfo*i,
-	map<ReducedMailbox*,NotifyerGtk2::WInfo::Box>::iterator x)
+GtkWidget* NotifyerGtk2::CreatePreview(UInfo*i,NotifyerGtk2::Box *x)
 {
 GtkWidget* ret;
 char str[5];
-snprintf(str,5,"%u",x->second.content.size());
+
+snprintf(str,5,"%u",x->content.size());
 	
 if (!i->preview)
 	ret = gtk_label_new(str);
 else
 	{
 	GtkWidget* w1,*l1,*l2,*l3,*tbl,*s1,*s2,*s3,*scrolledwindow1,*viewport1;
-	unsigned long int J=x->second.content.size();
+	unsigned long int J=x->content.size();
 	unsigned long int j=2;
 
 	ret = gtk_toggle_button_new_with_label(str);
@@ -312,7 +352,7 @@ else
 	g_signal_connect(ret,"clicked",G_CALLBACK(NotifyerGtk2::show),w1);
 	g_signal_connect(ret,"destroy",G_CALLBACK(NotifyerGtk2::destroy),w1);
 	
-	tbl=gtk_table_new(5,x->second.content.size()+2,FALSE);
+	tbl=gtk_table_new(5,x->content.size()+2,FALSE);
 		
 	l1 = gtk_label_new("#");
 	l2 = gtk_label_new("From");
@@ -346,8 +386,8 @@ else
 	gtk_widget_show(s2);
 	gtk_widget_show(s3);
 		
-	list<WInfo::Box::Mail>::reverse_iterator i=x->second.content.rbegin();
-	for(; i != x->second.content.rend(); i++,j++)
+	list<Box::Mail>::reverse_iterator i=x->content.rbegin();
+	for(; i != x->content.rend(); i++,j++)
 		{
 		GtkWidget* l1,*l2,*l3;
 		char str[5];
@@ -412,118 +452,205 @@ return FALSE;
  *
  *
  */
-
-void NotifyerGtk2::UpdateWindow(WInfo* i)
+bool NotifyerGtk2::free(GtkWidget *w,gpointer user_data)
 {
-map<ReducedMailbox*,NotifyerGtk2::WInfo::Box>::iterator x;
-int size = i->boxes.size();
+::free(user_data);
+//fprintf(stderr,"FFFF\n");
+return FALSE;
+}
+
+/*******************************************************************************
+ *
+ *
+ */
+
+void NotifyerGtk2::UpdateWindow(UInfo* i)
+{
+//map<ReducedMailbox*,Box>::iterator x;
+int size = 0;
 int j;
-GtkWidget* t,*w = i->window;
-GList* l;
+GtkWidget* t = NULL,*w = i->window;
+GList* l = NULL;
 
-if(i->position == string("top") ||
-   i->position == string("bottom"))
-	t = gtk_table_new(size,2,FALSE);
-else
-	t = gtk_table_new(2,size,FALSE);
-	
-for(j = 0 , x = i->boxes.begin() ; x != i->boxes.end() ; x++,j++)
+// if t exists -> size != 0.. read it!
+l = gtk_container_get_children(GTK_CONTAINER(w));
+if(l != NULL)
+	if(i->position == string("top") ||
+	   i->position == string("bottom"))
+		g_object_get(G_OBJECT(l->data),"n-columns",&size,NULL);
+	else
+		g_object_get(G_OBJECT(l->data),"n-rows",&size,NULL);
+
+// create/resize the table
+// and give t <- != NULL
+if(l  == NULL)
+	{	
+	if(i->position == string("top") ||
+	   i->position == string("bottom"))
+		t = gtk_table_new(2,1,FALSE);
+	else
+		t = gtk_table_new(1,2,FALSE);
+
+	gtk_container_add(GTK_CONTAINER(w),t);
+	gtk_widget_show(t);
+	}
+else 
 	{
-	
-	GtkWidget*b = gtk_button_new();
-	GtkWidget*l = gtk_label_new(x->first->GetName().c_str());
-	if(x->second.content.size() > 0 )
-		gtk_label_set_markup(GTK_LABEL(l),
-			(string("<span foreground='blue'"
-				" weight='ultrabold'"
-				" stretch='condensed'>") + 
-			 x->first->GetName().c_str() + 
-			 string("</span>")).c_str());
+	t = GTK_WIDGET(GTK_TABLE(l->data));
 
-	gtk_widget_show(l);
-	gtk_container_add(GTK_CONTAINER(b),l);
-	g_signal_connect(b,"clicked",
-		G_CALLBACK(NotifyerGtk2::execute),
-		(gpointer)x->first->GetCommand().c_str());
+	if(i->position == string("top") ||
+	   i->position == string("bottom"))
+		g_object_get(G_OBJECT(t),"n-columns",&size,NULL);
+	else
+		g_object_get(G_OBJECT(t),"n-rows",&size,NULL);
 	
+	// we need a resize
+	if( i->info.position == -1 )
+		{
+		t = GTK_WIDGET(GTK_TABLE(l->data));
+		//fprintf(stderr,"RESIZE\n");
+		if(i->position == string("top") ||
+		   i->position == string("bottom"))
+			gtk_table_resize(GTK_TABLE(t),2,size+1);
+		else
+			gtk_table_resize(GTK_TABLE(t),size+1,2);
+		}
+	}
+
+// set the position to the last one, or recall the sved one and 
+// remove old widgets
+if( i->info.position == -1 )
+	i->info.position = size; // this passes it back! shit c++ 
+else
+	{
+	// remove old widgets...
+	l = gtk_container_get_children(GTK_CONTAINER(t));
+	int done = 0;
+	while (l != NULL && done < 2)
+		{
+		int pos;
 		
-	GtkWidget*l2 = CreatePreview(i,x);
-	
-	if(i->position == string("topleft") ||
-	   i->position == string("left") ||
-	   i->position == string("bottomleft") ||
-	   i->position == string("managed"))
-		{
-		gtk_table_attach(GTK_TABLE(t),b,0,1,j,j+1,
-				GTK_FILL,GTK_SHRINK,0,0);
-		gtk_table_attach(GTK_TABLE(t),l2,1,2,j,j+1,
-				GTK_FILL,GTK_SHRINK,0,0);
-		}
-	else if (i->position == string("topright") ||
-	   i->position == string("right") ||
-	   i->position == string("bottomright"))
-		{
-		gtk_table_attach(GTK_TABLE(t),b,1,2,j,j+1,
-				GTK_FILL,GTK_SHRINK,0,0);
-		gtk_table_attach(GTK_TABLE(t),l2,0,1,j,j+1,
-				GTK_FILL,GTK_SHRINK,0,0);
-		}
-	else if(i->position == string("top"))
-		{
-		gtk_table_attach(GTK_TABLE(t),b,j,j+1,0,1,
-				GTK_FILL,GTK_SHRINK,0,0);
-		gtk_table_attach(GTK_TABLE(t),l2,j,j+1,1,2,
-				GTK_FILL,GTK_SHRINK,0,0);
-		}
-	else if(i->position == string("bottom"))
-		{
-		gtk_table_attach(GTK_TABLE(t),b,j,j+1,1,2,
-				GTK_FILL,GTK_SHRINK,0,0);
-		gtk_table_attach(GTK_TABLE(t),l2,j,j+1,0,1,
-				GTK_FILL,GTK_SHRINK,0,0);
+		if(i->position == string("top") ||
+		   i->position == string("bottom"))
+			gtk_container_child_get(GTK_CONTAINER(t),
+				GTK_WIDGET(l->data),
+				"left-attach",&pos,NULL);
+		else
+			gtk_container_child_get(GTK_CONTAINER(t),
+				GTK_WIDGET(l->data),
+				"top-attach",&pos,NULL);
+
+		if( pos == i->info.position)
+			{
+			done ++;
+			gtk_widget_destroy(GTK_WIDGET(l->data));
+			}
+		l = l->next;
 		}
 
-	if(x->second.content.size() > 0 )
+	if(done < 2)
+		fprintf(stderr,"internal error, a previously "
+				"added widget is lost :(\n");
+	}
+
+// j means the position of the widget that will be attached
+j = i->info.position;
+
+Box* x = i->mailbox;
+
+// create the button
+GtkWidget*b = gtk_button_new();
+GtkWidget*lbl = gtk_label_new(x->name.c_str());
+if(x->content.size() > 0 )
+	gtk_label_set_markup(GTK_LABEL(lbl),
+		(string("<span foreground='blue'"
+			" weight='ultrabold'"
+			" stretch='condensed'>") + 
+		 x->name + 
+		 string("</span>")).c_str());
+
+gtk_widget_show(lbl);
+gtk_container_add(GTK_CONTAINER(b),lbl);
+
+// since command is freed we make a copy and we free 
+// it when destroyed.
+char * tmp  =strdup(x->command.c_str());
+g_signal_connect(b,"clicked",
+	G_CALLBACK(NotifyerGtk2::execute),
+	(gpointer)tmp);
+g_signal_connect(b,"destroy",
+	G_CALLBACK(NotifyerGtk2::free),
+	(gpointer)tmp);
+
+// create the label
+GtkWidget*l2 = CreatePreview(i,x);
+
+// attach the created button+label
+if(i->position == string("topleft") ||
+   i->position == string("left") ||
+   i->position == string("bottomleft") ||
+   i->position == string("managed"))
+	{
+	gtk_table_attach(GTK_TABLE(t),b,0,1,j,j+1,
+			GTK_FILL,GTK_SHRINK,0,0);
+	gtk_table_attach(GTK_TABLE(t),l2,1,2,j,j+1,
+			GTK_FILL,GTK_SHRINK,0,0);
+	}
+else if (i->position == string("topright") ||
+   i->position == string("right") ||
+   i->position == string("bottomright"))
+	{
+	gtk_table_attach(GTK_TABLE(t),b,1,2,j,j+1,
+			GTK_FILL,GTK_SHRINK,0,0);
+	gtk_table_attach(GTK_TABLE(t),l2,0,1,j,j+1,
+			GTK_FILL,GTK_SHRINK,0,0);
+	}
+else if(i->position == string("top"))
+	{
+	gtk_table_attach(GTK_TABLE(t),b,j,j+1,0,1,
+			GTK_FILL,GTK_SHRINK,0,0);
+	gtk_table_attach(GTK_TABLE(t),l2,j,j+1,1,2,
+			GTK_FILL,GTK_SHRINK,0,0);
+	}
+else if(i->position == string("bottom"))
+	{
+	gtk_table_attach(GTK_TABLE(t),b,j,j+1,1,2,
+			GTK_FILL,GTK_SHRINK,0,0);
+	gtk_table_attach(GTK_TABLE(t),l2,j,j+1,0,1,
+			GTK_FILL,GTK_SHRINK,0,0);
+	}
+
+// hilight the buttons
+if(x->content.size() > 0 )
+	{
+	gtk_widget_set_sensitive(b,TRUE);
+	gtk_widget_set_sensitive(l2,TRUE);
+	gtk_button_set_relief(GTK_BUTTON(b),GTK_RELIEF_NORMAL);
+	if (i->preview)
+		gtk_button_set_relief(GTK_BUTTON(l2),GTK_RELIEF_NORMAL);
+	gtk_widget_set_state(b,GTK_STATE_SELECTED);
+	gtk_widget_show(b);
+	gtk_widget_show(l2);
+	}
+else
+	{
+	if( i->showall)
 		{
-		gtk_widget_set_sensitive(b,TRUE);
-		gtk_widget_set_sensitive(l2,TRUE);
-		gtk_button_set_relief(GTK_BUTTON(b),GTK_RELIEF_NORMAL);
+		gtk_widget_set_sensitive(l2,FALSE);
+		gtk_button_set_relief(GTK_BUTTON(b),GTK_RELIEF_NONE);
 		if (i->preview)
-			gtk_button_set_relief(GTK_BUTTON(l2),GTK_RELIEF_NORMAL);
-		gtk_widget_set_state(b,GTK_STATE_SELECTED);
+			gtk_button_set_relief(
+				GTK_BUTTON(l2),GTK_RELIEF_NONE);
+		gtk_widget_set_sensitive(b,FALSE);
 		gtk_widget_show(b);
 		gtk_widget_show(l2);
 		}
 	else
 		{
-		if( i->showall)
-			{
-			gtk_widget_set_sensitive(l2,FALSE);
-			gtk_button_set_relief(GTK_BUTTON(b),GTK_RELIEF_NONE);
-			if (i->preview)
-				gtk_button_set_relief(
-					GTK_BUTTON(l2),GTK_RELIEF_NONE);
-			gtk_widget_set_sensitive(b,FALSE);
-			gtk_widget_show(b);
-			gtk_widget_show(l2);
-			}
-		else
-			{
-			gtk_widget_hide(b);
-			gtk_widget_hide(l2);
-			}
+		gtk_widget_hide(b);
+		gtk_widget_hide(l2);
 		}
-
-	
-		}
-gtk_widget_show(t);
-
-l = gtk_container_get_children(GTK_CONTAINER(w));
-
-if(l != NULL)
-	gtk_widget_destroy(GTK_WIDGET(l->data));
-
-gtk_container_add(GTK_CONTAINER(w),t);
+	}
 }
 /*******************************************************************************
  *

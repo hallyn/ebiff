@@ -36,6 +36,19 @@ xosd = new {
 }
 
 -- -------------------------------------------------------------------------- --
+-- create a sox notifyer
+--
+
+sox = new {
+	type="notifyer";
+	driver={
+		type="sox";
+		file="/usr/share/licq/sounds/fun/Online.wav";
+		};
+}
+
+
+-- -------------------------------------------------------------------------- --
 -- create the list of all the ~/Mail maildirs
 --
 
@@ -65,7 +78,7 @@ mbox = new {
 	};
 	name="mbox";
 	command="xterm -e mutt -f "..os.getenv("HOME").."/mbox";
-	interval=5;
+	interval=60;
 }
 
 -- this is equivalent
@@ -80,6 +93,7 @@ mbox = new {
 
 bind(mailboxes , gtk2)
 bind(mbox , gtk2) 
+bind(mbox , sox) 
 
 -- -------------------------------------------------------------------------- --
 -- bind "amici" maildir with the xosd notifyer.

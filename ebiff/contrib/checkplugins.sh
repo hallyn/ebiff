@@ -14,14 +14,14 @@ else
 	echo "   --> apt-get install libgtk2.0-dev"
 fi
 
-echo -n "-> sdl..."
-type sdl-config 1>/dev/null 2>/dev/null
+echo -n "-> sox..."
+type play 1>/dev/null 2>/dev/null
 if [ $? = 0 ]; then
-	PLUGINS="$PLUGINS sdlaudio"
+	PLUGINS="$PLUGINS sox"
 	echo "ok"
 else
-	echo "unable to find sdl-config"
-	echo "   --> apt-get install libsdl1.2-dev"
+	echo "unable to find play"
+	echo "   --> apt-get install sox"
 fi
 
 echo -n "-> xosd..."
