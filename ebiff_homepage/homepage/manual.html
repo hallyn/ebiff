@@ -65,7 +65,7 @@ margin-top:0px;
     <A HREF="#maildir">maildir</A>, <A HREF="#mbox">mbox</A>.
     <BR>
     Supported notifier drivers are: 
-    <A HREF="#stdout">stdout</A>, <A HREF="#gtk2">gtk2</A>, <A HREF="#xosd">xosd</A>, <A HREF="#flite">flite</A>, <A HREF="#sox">sox</A>.
+    <A HREF="#stdout">stdout</A>, <A HREF="#gtk2">gtk2</A>, <A HREF="#xosd">xosd</A>, <A HREF="#flite">flite</A>, <A HREF="#sox">sox</A>, <A HREF="#utmp">utmp</A>.
     <BR>
     The function call <TT>bind(mailbox,notifier)</TT>
     creates a new <B>relation</B> , and adds it to the relation 
@@ -202,7 +202,7 @@ is required, allowed value is <FONT color="red">notifier</FONT>
 <li>
 field <FONT color="blue">driver</FONT>
 of type <FONT color="green">table</FONT>
-is required, allowed values are <FONT color="DarkViolet">stdout</FONT>, <FONT color="DarkViolet">gtk2</FONT>, <FONT color="DarkViolet">xosd</FONT>, <FONT color="DarkViolet">flite</FONT>, <FONT color="DarkViolet">sox</FONT><ul>
+is required, allowed values are <FONT color="DarkViolet">stdout</FONT>, <FONT color="DarkViolet">gtk2</FONT>, <FONT color="DarkViolet">xosd</FONT>, <FONT color="DarkViolet">flite</FONT>, <FONT color="DarkViolet">sox</FONT>, <FONT color="DarkViolet">utmp</FONT><ul>
 <li>
 <DIV ID="stdout">
     Table <B>stdout</B><I> ( Simple print on stdout ) </I>
@@ -350,6 +350,23 @@ is required, allowed value is <FONT color="red">sox</FONT>
 field <FONT color="blue">file</FONT>
 of type <FONT color="green">string</FONT>
 is required<BR><I style="margin-left:20px;">The wav file to play</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="utmp">
+    Table <B>utmp</B><I> ( Simple broadcast-print on all users utmp-registered terminals (normal tty or pts (xterm) are ok) ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">utmp</FONT>
+</li>
+<li>
+field <FONT color="blue">printall</FONT>
+of type <FONT color="green">boolean</FONT>
+is optional, default value is <FONT color="red">false</FONT><BR><I style="margin-left:20px;">Print From and Subject info of mails</I>
 </li>
 </ul>
 </li>
