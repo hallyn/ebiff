@@ -480,8 +480,25 @@ non alphanumeric characters:
 		having the <TT>name</TT> name.
 		</DD>
 	</DL>
-
 	</LI>
+	<LI>
+	Debug functions:
+	<DL>
+		<DT>print_table(t)</DT>
+		<DD>
+		Prints the content of a table. You may use this to print
+		the returned list of <TT>find_*</TT>.
+		</DD>
+		<DT>print_mailbox(t)</DT>
+		<DD>
+		Prints the content of a table of mailboxes. 
+		You may use this to print
+		the returned list of <TT>*2mailboxes</TT>.
+
+		</DD>
+	</DL>
+	</LI>
+
 
    </UL>
    <H2 ID="complex">Complex example</H2>

@@ -357,4 +357,20 @@ function selectmailbox(t,name)
 	return nil
 end
 
+-- -------------------------------------------------------------------------- --
+-- debug helper function
+function print_table(t)
+	table.foreach(t,print)
+end
+-- -------------------------------------------------------------------------- --
+-- debug helper function
+function print_mailbox(t)
+	local function print_box(b)
+		table.foreach(b,print)
+		print("---------------------------")
+	end
+
+	table.foreach(t,print_box)
+end
+
 -- eof
