@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/css" href="style_tab.css" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<HTML>
+<HEAD>
+<TITLE>ebiff homepage</TITLE>
+
+<LINK TYPE="text/css" REL="stylesheet" HREF="style.css" />
+
+<meta name="keywords" content="biff, xbiff, email, notification"/>
+
+<meta name="description" content="ebiff homepage"/>
+
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"/>
+
+</HEAD>
+<BODY>
+
+<H1>ebiff homepage</H1>
+
+<H2>What is this?</H2>
+<P>
+ebiff is a mail notification agent, like biff or Xbiff, for the GNU/Linux 
+operating systems (and other posix operating systems).
+</P>
+
+<H2>What the <B>e</B> of ebiff stands for?</H2>
+<P>
+ebiff is an <B>e</B>xtensible mail notification agent, it is also an
+<B>e</B>nhanced biff clone.
+</P>
+
+<H2>What is ebiff able to do?</H2>
+<P>
+ebiff is plugin based, so its capabilityes are only related to the plugins
+already written. There are two types of plugins: 
+<I>mailbox</I> and <I>notifyer</I>.
+</P>
+
+<P>
+These are the <I>mailbox</I> plugins:
+</P>
+<DL>
+	<DT>maildir</DT>
+	<DD>Allows ebiff to access mailboxes in <I>maildir</I> format</DD>
+	<DT>mbox</DT>
+	<DD>Allows ebiff to access mailboxes in <I>mbox</I> format</DD>
+</DL>
+<P>
+These are the <I>notifyer</I> plugins:
+</P>
+<DL>
+	<DT>gtk2</DT>
+	<DD>
+	    This plugins shows the mailbox status in one or more windows, like 
+	    <A HREF="http://www.fiction.net/blong/programs/gbuffy/">gbuffy</A>,
+	    but is really more customizable.
+	</DD>
+	<DT>xosd</DT>
+	<DD>
+	    This notifyer prints an on-screen notice.
+	</DD>
+	<DT>sox</DT>
+	<DD>
+	    You can associate a sond with a mailbox status change.
+	</DD>
+	<DT>flite</DT>
+	<DD>
+	    Flite can synthesize a voice that says what you want when a mail
+	    arrives, like <I>"you got new mail"</I>
+	</DD>
+	<DT>stdout</DT>
+	<DD>
+	    This is a simple and debugging purpose only plugin, it will be 
+	    replaced by an utmp plugin soon.
+	</DD>
+</DL>
+
+<H2>What does it look like?</H2>
+<P>
+Here you can see some screenshots (click on the images to enlarge):
+</p>
+<TABLE>
+<TR>
+<TD>
+<A HREF="shot1.jpg" CLASS="w3shit"><IMG SRC="shot1-small.jpg"/></A>
+</TD>
+<TD>
+Here you can see the gtk2 and the xosd plugins. The green on-screen
+text is made by the xosd plugin, while the top, left and right windows are the 
+gtk2 notification windows. While top and left are top-level windows with 
+fixed position the window on the right is managed by the windows manager.
+The window in the center is the preview window associated with the secfoc 
+mailbox. The left windows shows all the mailboxes, also the empty ones, while 
+the others windows only the full. Read the documentation for more info about
+the gtk2 plugin.
+</TD>
+</TR>
+</TABLE>
+
+<H2>What is ebiff development status?</H2>
+<P>
+ebiff is <I>beta</I>, not really tested, but works fine for me.
+Please submit bug reports and suggestions to the author.
+</P>
+
+<H2>Where can I download ebiff?</H2>
+<P>
+To download the sources go 
+<A HREF="http://sourceforge.net/project/showfiles.php?group_id=103601">there</A>.<BR/><BR/>
+If you use the debian operating system, you can add this repository 
+(it is for unstable i386 only): <BR/>
+<TT>
+<BR/>
+deb http://tassi.web.cs.unibo.it/debian/ebiff ./<BR/>
+deb-src http://tassi.web.cs.unibo.it/debian/ebiff ./
+</TT>
+</P>
+
+<H2>Where can I find some documentation about ebiff's configuration file?</H2>
+<P>
+<A HREF="manual.html">Here</A> you can find the manual, it is included 
+in the binary 
+distribustions, an is generated automatically if you compile it from 
+the sources.
+</P>
+
+<H2>Who created this piece of code?</H2>
+<P>
+The author is 
+<A HREF="http://www.cs.unibo.it/~tassi/unibo/index.html">Enrico Tassi</A>, 
+contact him to this address:&nbsp; <IMG SRC="ind1.png"/>
+</P>
+
+<HR style="margin-left:2px;margin-right:2px;"/>
+<P style="margin-right:20px;text-align:right;font-size:12pt;font-family:courier,sans;">
+$Id$
+</p>
+
+</BODY>
+</HTML>
