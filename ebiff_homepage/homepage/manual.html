@@ -1,0 +1,436 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ebiff configuration file documentation</title>
+<style type="text/css">
+  TT {font-size:14pt;font-family:courier;}
+  I {font-size:14pt;font-family:helvetica;}
+  PRE {font-size:13pt;font-family:courier;
+  	border-style:solid;border-size:1;border-color:grey;
+	margin:10 10 10 10;padding:10 10 10 10;}
+  body { 
+background-color: #fcfcfc;
+font-family: helvetica,sans-serif;
+font-size:15pt;
+margin-top:0px;
+margin-bottom:0px;
+margin-left:0px;
+margin-right:0px;
+}
+
+p {margin-left:10;}
+
+  UL {list-style-type:disc;}
+  UL UL {list-style-type:square;}
+  UL UL UL {list-style-type:disc;}
+  UL UL UL UL {list-style-type:square;}
+  UL UL UL UL UL {list-style-type:disc;}
+  H1 {font-size: 24pt;
+color:#dfdff0;
+text-align:center;
+border-style:solid;
+border-width:1px;
+border-color:#dfdff0;
+background-color:#2f2ff0;
+margin-left:0px;
+margin-right:0px;
+margin-top:0px;
+}
+  A  {color:DarkViolet;text-decoration: none}
+  A:hover {color: Violet;background-color: DarkViolet;text-decoration: none;}
+  A.nohover:hover {background-color: transparent;text-decoration: none;
+  	color: transparent;}
+  A.normal  {color:Blue;text-decoration: none}
+  A.normal:hover {color: LightBlue;background-color: Blue;text-decoration: none;}
+  A.normal.nohover:hover {background-color: transparent;text-decoration: none;
+  	color: transparent;}
+  </style>
+</head>
+<body>
+<h1>Configuration file documentation</h1>
+<P>
+    The only purpose of the configuration file is to say ebiff to
+    check mailbox x for new mail and notify the user with y.<BR>
+    Supported mailbox drivers are: 
+    <A HREF="#maildir">maildir</A>, <A HREF="#mbox">mbox</A>.
+    <BR>
+    Supported notifyer drivers are: 
+    <A HREF="#stdout">stdout</A>, <A HREF="#gtk2">gtk2</A>, <A HREF="#xosd">xosd</A>, <A HREF="#flite">flite</A>, <A HREF="#sox">sox</A>.
+    <BR>
+    The function call <TT>bind(mailbox,notifyer)</TT>
+    creates a new <B>relation</B> , and adds it to the relation 
+    list used by ebiff.<BR>
+    An alternative way of calling <B>bind</B> is to pass a mailbox list or
+    a notifyer list instead of a single element. The right syntax to do this 
+    is <TT>bind({box1,box2,..,boxn},{not1,not2,...,notm})</TT>.<BR>
+    This is a short example of a configuration file (a longer and more complex
+    example is in <TT>/usr/share/doc/ebiff/</TT> in the debian system):
+    </P>
+<pre>
+--
+-- This is a sample configuration file for ebiff
+--
+
+-- create a mailbox
+b_inbox = new{
+	type = "mailbox";
+	name = "Inbox";
+	command = "mutt.sh -f =inbox &amp;";
+	driver = {
+		type="maildir";
+		path = "/home/me/Mail/inbox";
+		};
+	interval=10;
+	}
+	
+-- create a gtk2 notifyer
+n_gtk2 = new{
+	type = "notifyer";
+	driver= {
+		type="gtk2";
+		position="right";
+		showall=true;
+		}
+	}
+
+-- create a xosd notifyer
+n_osd = new{
+	type = "notifyer";
+	driver= {
+		type="xosd";
+		}
+	}
+
+-- bind them
+bind(b_inbox,{n_gtk2,n_osd})
+</pre>
+<P>
+    In the example the mailbox <TT>b_inbox</TT> will be inspected every 
+    10 seconds and eventually both <TT>n_gtk2</TT> and <TT>n_osd</TT>
+    will be used to notify the user.<BR>
+    Rememeber that comments starts with <TT>--</TT>, strings can be queted with
+    single <TT>'</TT> or double <TT>"</TT> quotes, boolean values are 
+    <TT>true</TT> and <TT>false</TT>. The syntax and 
+    functionalities you can use are really more than these, since 
+    the configuration file is a real
+    <A CLASS="normal" HREF="http://www.lua.org">LUA</A> script 
+    (see <A CLASS="normal" HREF="http://lua-users.org">lua-users</A> for a 
+    tutorial). Some syntax peculiarity follow:
+    </P>
+<UL>
+<LI>The following sentences are the same for LUA:
+
+<OL>
+<LI><TT> a = { b="3" , c=3 , d=true }</TT></LI>
+<LI><TT> a = { b='3' , c=3 , d=true , }</TT></LI>
+<LI><TT> a = { b="3" ; c=3 ; d=true ; }</TT></LI>
+<LI><TT> a = { b='3' ; c=3 ; d=true  }</TT></LI>
+<LI><TT> a = {}<BR>
+a.b = "3"<BR>
+a.c = 3<BR>
+a.d = true</TT></LI>
+</OL>
+<BR><OL>
+<LI><TT> a.b = 3</TT></LI>
+<LI><TT> a["b"] = 3</TT></LI>
+</OL>
+<BR><OL>
+<LI><TT> a = { b = "3" }</TT></LI>
+<LI><TT> a = { ["b"] = "3" }</TT></LI>
+</OL>
+<BR>
+</LI>
+<LI>Some of these notations are useful if the name contains spaces or 
+non alphanumeric characters:
+<OL>
+<LI>
+<I>invalid</I>:<BR><TT>
+	a.lp-forum = "3"<BR>
+	c = { hi man = true }</TT>
+</LI>
+<LI>
+<I>valid</I>:<BR><TT>
+	a["lp-forum"] = "3"<BR>
+	c = { ["hi man"] = true }</TT>
+</LI>
+</OL>
+</LI>
+</UL>
+<P>
+    The last important thing you must know is tgat you must use the 
+    <TT>new</TT> function (ok, in the example it has no <TT>()</TT>, but
+    it is automatically understood by LUA) to create a new mailbox or notifyer
+    instance (calling new also adds the <TT>id</TT> field, this is why it is a
+    required field but not used in the sample configuration).<BR>
+    A <B>relation</B> has the following fields (notice that the tables 
+    <B>mailbox</B> and <B>notifyer</B> that must be passed to <TT>bind</TT>
+    are subtables of <B>relation</B> and theys fields are listed here):
+    <ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">relation</FONT>
+</li>
+<li>
+field <FONT color="blue">notifyer</FONT>
+of type <FONT color="green">table</FONT>
+is required, allowed value is <FONT color="DarkViolet">notifyer</FONT><ul><li>
+<DIV ID="notifyer">
+    Table <B>notifyer</B><I> ( A way to notify the user ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">id</FONT>
+of type <FONT color="green">number</FONT>
+is required<BR><I style="margin-left:20px;">Forget this, it is automatically added by new()</I>
+</li>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">notifyer</FONT>
+</li>
+<li>
+field <FONT color="blue">driver</FONT>
+of type <FONT color="green">table</FONT>
+is required, allowed values are <FONT color="DarkViolet">stdout</FONT>, <FONT color="DarkViolet">gtk2</FONT>, <FONT color="DarkViolet">xosd</FONT>, <FONT color="DarkViolet">flite</FONT>, <FONT color="DarkViolet">sox</FONT><ul>
+<li>
+<DIV ID="stdout">
+    Table <B>stdout</B><I> ( Simple print on stdout ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">stdout</FONT>
+</li>
+<li>
+field <FONT color="blue">printall</FONT>
+of type <FONT color="green">boolean</FONT>
+is optional, default value is <FONT color="red">false</FONT><BR><I style="margin-left:20px;">Print From and Subject info of mails</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="gtk2">
+    Table <B>gtk2</B><I> ( Gbuffy like plugin ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">gtk2</FONT>
+</li>
+<li>
+field <FONT color="blue">preview</FONT>
+of type <FONT color="green">boolean</FONT>
+is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">Show a button to show the mailbox preview</I>
+</li>
+<li>
+field <FONT color="blue">showall</FONT>
+of type <FONT color="green">boolean</FONT>
+is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">Not hide the empty boxes</I>
+</li>
+<li>
+field <FONT color="blue">position</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">topleft</FONT>, allowed values are <FONT color="red">managed</FONT>, <FONT color="red">top</FONT>, <FONT color="red">bottom</FONT>, <FONT color="red">left</FONT>, <FONT color="red">right</FONT>, <FONT color="red">topleft</FONT>, <FONT color="red">topright</FONT>, <FONT color="red">bottomleft</FONT>, <FONT color="red">bottomright</FONT><BR><I style="margin-left:20px;">Where to put the window</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="xosd">
+    Table <B>xosd</B><I> ( Xosd is X on screen display ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">xosd</FONT>
+</li>
+<li>
+field <FONT color="blue">shoadowoffset</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">0</FONT>, allowed values are in range <FONT color="red">0</FONT>, <FONT color="red">10</FONT><BR><I style="margin-left:20px;">Shadow dimension</I>
+</li>
+<li>
+field <FONT color="blue">hoffset</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">0</FONT>, allowed values are in range <FONT color="red">0</FONT>, <FONT color="red">9999</FONT><BR><I style="margin-left:20px;">Move some pixels from position</I>
+</li>
+<li>
+field <FONT color="blue">outlineoffset</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">1</FONT>, allowed values are in range <FONT color="red">0</FONT>, <FONT color="red">3</FONT><BR><I style="margin-left:20px;">Border dimension</I>
+</li>
+<li>
+field <FONT color="blue">voffset</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">0</FONT>, allowed values are in range <FONT color="red">0</FONT>, <FONT color="red">9999</FONT><BR><I style="margin-left:20px;">Move some pixels from position</I>
+</li>
+<li>
+field <FONT color="blue">timeout</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">5</FONT>, allowed values are in range <FONT color="red">0</FONT>, <FONT color="red">60</FONT><BR><I style="margin-left:20px;">Seconds before hiding notice</I>
+</li>
+<li>
+field <FONT color="blue">font</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">-*-freesans-*-r-*-*-32-*-*-*-*-*-*-*</FONT><BR><I style="margin-left:20px;">The font in X format (es: -*-freesans-*-r-*-*-32-*-*-*-*-*-*-*)</I>
+</li>
+<li>
+field <FONT color="blue">outlinecolor</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">MediumBlue</FONT><BR><I style="margin-left:20px;">Font border color</I>
+</li>
+<li>
+field <FONT color="blue">align</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">center</FONT>, allowed values are <FONT color="red">left</FONT>, <FONT color="red">center</FONT>, <FONT color="red">right</FONT><BR><I style="margin-left:20px;">Horizontal position</I>
+</li>
+<li>
+field <FONT color="blue">color</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">#FFFF00</FONT><BR><I style="margin-left:20px;">Font color, see http://www.yo.rim.or.jp/~kageyama/xrgb.html a list</I>
+</li>
+<li>
+field <FONT color="blue">pos</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">middle</FONT>, allowed values are <FONT color="red">top</FONT>, <FONT color="red">middle</FONT>, <FONT color="red">bottom</FONT><BR><I style="margin-left:20px;">Vertical position</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="flite">
+    Table <B>flite</B><I> ( Voice-synthesize plugin ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">flite</FONT>
+</li>
+<li>
+field <FONT color="blue">one</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">There is $n$ new mail in box $b$</FONT><BR><I style="margin-left:20px;">The phrase for 1 mail, $b$ is expanded in the mailbox name, $n$ in the number of mails</I>
+</li>
+<li>
+field <FONT color="blue">zero</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">No new mail in box $b$</FONT><BR><I style="margin-left:20px;">The phrase for no mail, same special characters of one</I>
+</li>
+<li>
+field <FONT color="blue">more</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">There are $n$ mails in box $b$</FONT><BR><I style="margin-left:20px;">The phrase for 2+ mails, same special characters of one</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="sox">
+    Table <B>sox</B><I> ( Plays a sound to notify ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">sox</FONT>
+</li>
+<li>
+field <FONT color="blue">file</FONT>
+of type <FONT color="green">string</FONT>
+is required<BR><I style="margin-left:20px;">The wav file to play</I>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li></ul>
+</li>
+<li>
+field <FONT color="blue">mailbox</FONT>
+of type <FONT color="green">table</FONT>
+is required, allowed value is <FONT color="DarkViolet">mailbox</FONT><ul><li>
+<DIV ID="mailbox">
+    Table <B>mailbox</B><I> ( A way to access a mailbox ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">id</FONT>
+of type <FONT color="green">number</FONT>
+is required<BR><I style="margin-left:20px;">Forget this, it is automatically added by new()</I>
+</li>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">mailbox</FONT>
+</li>
+<li>
+field <FONT color="blue">driver</FONT>
+of type <FONT color="green">table</FONT>
+is required, allowed values are <FONT color="DarkViolet">maildir</FONT>, <FONT color="DarkViolet">mbox</FONT><ul>
+<li>
+<DIV ID="maildir">
+    Table <B>maildir</B><I> ( Maildir type mailbox, usually ~/Mail/ is a maildir ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">maildir</FONT>
+</li>
+<li>
+field <FONT color="blue">path</FONT>
+of type <FONT color="green">string</FONT>
+is required<BR><I style="margin-left:20px;">You should know this :)</I>
+</li>
+</ul>
+</li>
+<li>
+<DIV ID="mbox">
+    Table <B>mbox</B><I> ( Mbox type mailbox, usually ~/mbox is an mbox ) </I>
+    has these fields:</DIV>
+<ul>
+<li>
+field <FONT color="blue">type</FONT>
+of type <FONT color="green">string</FONT>
+is required, allowed value is <FONT color="red">mbox</FONT>
+</li>
+<li>
+field <FONT color="blue">path</FONT>
+of type <FONT color="green">string</FONT>
+is required<BR><I style="margin-left:20px;">You should know this :)</I>
+</li>
+<li>
+field <FONT color="blue">newonly</FONT>
+of type <FONT color="green">boolean</FONT>
+is optional, default value is <FONT color="red">true</FONT><BR><I style="margin-left:20px;">List only new messages</I>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+field <FONT color="blue">interval</FONT>
+of type <FONT color="green">number</FONT>
+is optional, default value is <FONT color="red">10</FONT>, allowed values are in range <FONT color="red">1</FONT>, <FONT color="red">3600</FONT><BR><I style="margin-left:20px;">Delay between two mailbox inspection, in seconds</I>
+</li>
+<li>
+field <FONT color="blue">command</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">/bin/true</FONT><BR><I style="margin-left:20px;">The command to execute (may be requested by the notifyer plugin to show the content of the mailbox, for example 'mutt -f mbox')</I>
+</li>
+<li>
+field <FONT color="blue">name</FONT>
+of type <FONT color="green">string</FONT>
+is optional, default value is <FONT color="red">-no-name-</FONT><BR><I style="margin-left:20px;">The name that will be used by the notifyer as the mailbox identifyer</I>
+</li>
+</ul>
+</li></ul>
+</li>
+</ul>
+</P>
+<HR>
+</body>
+</html>
