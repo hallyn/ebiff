@@ -1,0 +1,66 @@
+Source: ebiff
+Section: mail
+Priority: optional
+Maintainer: Enrico Tassi <gareuselesinge@users.sourceforge.net>
+Build-Depends: debhelper (>= 4.0.0), flite1-dev, libxosd-dev, libsdl1.2-dev, libgtk2.0-dev, liblualib50-dev, liblua50-dev, lua50, xsltproc
+Standards-Version: 3.6.0
+
+Package: ebiff
+Architecture: any
+Depends: ${shlibs:Depends}, ebiff-notifyer, ebiff-mailbox
+Description: Enhanced biff
+ This is plugin based biff clone. It clone only the idea of mail notification
+ since it supports powerful plugin for both accessing multiple mailbox formats
+ and notifyng the user in various ways.
+
+Package: ebiff-notifyer-gtk2
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-notifyer
+Description: ebiff's gtk2 based notifyer
+ This plugin provides a gbuffy like interface.
+
+Package: ebiff-notifyer-xosd
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-notifyer
+Description: ebiff's Xosd based notifyer
+ This plugin provides ebiff the capability of printing on screen display
+ messages
+
+Package: ebiff-notifyer-sdlaudio
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-notifyer
+Description: ebiff's SDL audio notifyer
+ This plugin plays a sound when new mail arrives
+
+Package: ebiff-notifyer-flite
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-notifyer
+Description: ebiff's flite voice synthesis notifyer
+ This plugin speaks a sentence when new mail arrives
+
+Package: ebiff-notifyer-stdout
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-notifyer
+Description: ebiff's stdout notifyer
+ This plugin prints a simple message on stdout, not really interesting
+
+Package: ebiff-mailbox-mbox
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-mailbox
+Description: ebiff's mbox plugin
+ This plugin allows ebiff to access mbox mailboxes
+
+Package: ebiff-mailbox-maildir
+Architecture: any
+Depends: ${shlibs:Depends}
+Provides: ebiff-mailbox
+Description: ebiff's maildir plugin
+ This plugin allows ebiff to access maildir mailboxes
+
+

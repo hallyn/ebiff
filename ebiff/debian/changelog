@@ -1,0 +1,9 @@
+ebiff (0.0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Enrico Tassi <gareuselesinge@users.sourceforge.net>  Sat, 28 Feb 2004 16:10:26 +0100
+
+Local variables:
+mode: debian-changelog
+End:

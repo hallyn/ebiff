@@ -1,0 +1,4 @@
+This software is distributed under GNU/GPL license. 
+contrib/* may be under different license, bin2c is part of the LUA
+package that is under MIT license,while lposix.* and modemuncher are 
+public domain.
