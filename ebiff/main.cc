@@ -19,14 +19,13 @@
 #include <algorithm>
 
 #include <stdio.h>
+#include <assert.h>
+#include <unistd.h>
+#include <getopt.h>
 
 #include "parser.h"
 #include "relation.h"
 #include "scheduler.h"
-#include <assert.h>
-
-#include <unistd.h>
-
 #include "config.h"
 
 class Action
@@ -63,8 +62,31 @@ else
 }
 int Action::result() {return 0;}
 
-int main()
+static struct option opts[] = { 
+	{ "version" , no_argument , NULL , 'V'},
+	{ NULL, 0, NULL, 0 } };
+
+static void usage(const char *progname) {
+	fprintf(stderr, "Usage:  %s\t[-V|--version] \n", progname);
+}
+
+int main(int argc, char *argv[])
 {
+int res;
+while ((res=getopt_long(argc,argv,"V",opts,NULL))!= -1) 
+	{
+	if (res == 'V') 
+		{
+		usage(argv[0]);
+		exit(0);
+		}
+	else 
+		{
+		usage(argv[0]);
+		exit(1);
+		}
+	}
+	
 // check for the config file
 const char* home = getenv("HOME");
 char path[255];

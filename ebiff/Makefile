@@ -1,5 +1,5 @@
 ARCH=$(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ -e s/arm.*/arm/ -e s/sa110/arm/ -e s/ppc/powerpc/)
-VERSION=0.0.1
+VERSION=$(shell cat config.h | grep "\#define VERSION" | cut -d \" -f 2)
 
 SRC=$(shell ls *.cc)
 OBJ=$(subst .cc,.o,$(SRC))
@@ -14,11 +14,11 @@ endif
 
 help:
 	@echo -e "Supported targets are:"
-	@echo -e "\tall"
-	@echo -e "\trelease"
+	@echo -e "\tall\t- build here"
+	@echo -e "\trelease\t- build the tgz and deb distributions"
 	@echo -e "\tdistclean"
-	@echo -e "\tinstall"
-	@echo -e "\tinstalldoc"
+	@echo -e "\tinstall\t- install in $(PREFIX)"
+	@echo -e "\tinstalldoc\t- install documentation"
 
 all: contrib/bin2c ebiff plugins doc
 
