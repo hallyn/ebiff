@@ -77,7 +77,7 @@ while ((res=getopt_long(argc,argv,"V",opts,NULL))!= -1)
 	{
 	if (res == 'V') 
 		{
-		usage(argv[0]);
+		fprintf(stdout,"\nebiff version %s\n\n",VERSION);
 		exit(0);
 		}
 	else 
