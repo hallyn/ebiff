@@ -1,9 +1,9 @@
 all:
 	make -C mailbox 
-	make -C notifyer
+	make -C notifier
 
 clean:
 	make -C mailbox clean
-	make -C notifyer clean
+	make -C notifier clean
 
-.PHONY: mailbox notifyer
+.PHONY: mailbox notifier
