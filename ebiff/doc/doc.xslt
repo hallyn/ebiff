@@ -179,6 +179,14 @@ margin-left:10px;
 width:30%;
 }
 
+H3 {
+font-size: 16pt;
+color:#2f2fc0;
+text-align:left;
+font-weight:normal;
+margin-left:10px;
+}
+
 A  {
 color:DarkViolet;
 text-decoration: none;
@@ -263,6 +271,7 @@ margin-left:20px;
 	<LI><A HREF="#plugins">The plugins options</A></LI>
 	<LI><A HREF="#functions">functions.lua</A></LI>
 	<LI><A HREF="#complex">Complex example</A></LI>
+	<LI><A HREF="#net">Network transparent notification</A></LI>
     </OL>
     <H2 ID="intro">Introduction</H2>
     <P>
@@ -555,6 +564,50 @@ bind(mailboxes,xosd)
 -- bind some mailboex to the sox notifier
 bind(selectmailbox(mailboxes,"sf.net"),sox)
 bind(selectmailbox(mailboxes,"friends"),sox)</PRE>
+   <H2 ID="net">Network transparent notification</H2>
+   <P>
+   Sometimes you need to keep your mail on an host and being notified on 
+   another host.
+   </P>
+   <H3>Introduction</H3>
+   <p>
+   ebiff can check mailbox on a computer <B>A</B> and notify the 
+   user on a computer <B>B</B>.<BR/>
+   To do this the simplest approach is to use the netout/netin plugins.
+   The netout plugin sends notification request, the netin plugin receives 
+   notification requests.<BR/> 
+   You can see the netout plugin as a notifier and
+   the netin plugin as a mailbox.
+   </p>
+   <H3>Configuration</H3>
+   <p>
+   The simplest configuration is to have only the notout notifier on host 
+   <B>A</B> and only the netin mailbox on host <B>B</B>. This allows you
+   to have all the mailboxes on <B>A</B> seen as one mailbox on <B>B</B>.<BR/>
+   <BR/>
+   The most complex one is to have one netout notifier for each mailbox on 
+   <B>A</B> and a corresponding number of netin mailboxes on <B>B</B>.<BR/>
+   <BR/>
+   The first solution is simpler, but is not enough powerful to allow you
+   to remotely notify different mailboxes with different notifiers. The best
+   solution is to tailor the configuration file on your needs, defining a 
+   netout notifier for each set of mailboxes you want to notify with the 
+   same notifier.
+   </p>
+   <H3>Security</H3>
+   <P>
+   All network traffic is in clear. If your hosts are conneted by an untrusted
+   network you can user an ssh tunnel to solve the problem.<BR/>
+   Consider the example on which you have one netout plugin on host <B>A</B>
+   and port 12345.
+   From <B>B</B> you can simply configure the netin plugin to use localhost 
+   as the host and port 12345 and start an ssh tunnel with<BR/>
+   <tt>ssh -C -L 12345:A:12345 A</tt><BR/> To protect your privacy even more it 
+   would be easy to patch ebiff'netout to accept incoming connection only from 
+   localhost or a trusted number of computers, but since not it is not 
+   implemented.
+   </P>
+
     <HR/>
     <div style="text-align:right;">
     <TT>$Id$</TT>

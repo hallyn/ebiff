@@ -148,7 +148,11 @@ mailbox_comment={
 	netin_default = {port=6758}
 	netin_allowed = {type=onestrof("netin"),port=onenumof(1,65535)}
 	netin_comment={
-		type="Net"}
+		type="Network forward plugin",
+		host="The host to connect to",
+		pass="The netout plugin pass",
+		port="The port to connect to"
+		}
 	
 	-- ------------------------------------------------------------------ --
 	-- mailbox::mbox definitions
@@ -193,7 +197,7 @@ notifier_comment={
 	netout_default = {port=6758}
 	netout_allowed = {type=onestrof("netout"),port=onenumof(1,65535)}
 	netout_comment={
-		type="Network forward",
+		type="Network forward plugin",
 		port="The port to listen on",
 		pass="The password"
 		}
