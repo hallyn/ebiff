@@ -500,6 +500,8 @@ if (!i->preview){
 		GtkWidget* l1,*l2,*l3;
 		char str[5];
 
+		snprintf(str,5,"%d",j-2);
+
 		l1 = gtk_label_new(str);
 		l2 = UnicodeLabelOf(i->From);
 		l3 = UnicodeLabelOf(i->Subject);
