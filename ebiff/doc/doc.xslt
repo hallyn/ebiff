@@ -87,14 +87,29 @@ is required</xsl:if></xsl:template>
   <head>
   <title>ebiff configuration file documentation</title>
   <style type="text/css">
-  TT {font-size:14pt;font-family:courier;}
-  I {font-size:14pt;font-family:helvetica;}
-  PRE {font-size:13pt;font-family:courier;
-  	border-style:solid;border-width:1px;
-	margin:10 10 10 10;padding:10 10 10 10;
-	border-color:#d8ca00;
-	background-color:#fffdcf;}
-  body { 
+
+TT {
+font-size:14pt;
+font-family:courier;
+}
+
+I {
+font-size:14pt;
+font-family:helvetica;
+}
+
+PRE {
+font-size:13pt;
+font-family:courier;
+border-style:solid;
+border-width:1px;
+margin:10 10 10 10;
+padding:10 10 10 10;
+border-color:#d8ca00;
+background-color:#fffdcf;
+}
+
+body { 
 background-color: #fcfcfc;
 font-family: helvetica,sans-serif;
 font-size:15pt;
@@ -104,22 +119,41 @@ margin-left:0px;
 margin-right:0px;
 }
 
-p {margin-left:10;}
+p {
+margin-left:10;
+}
 
-  UL {list-style-type:disc;}
-  UL UL {list-style-type:square;}
-  UL UL UL {list-style-type:disc;
+UL {
+list-style-type:disc;
+}
+
+UL UL {
+list-style-type:square;
+}
+
+UL UL UL {
+list-style-type:disc;
 border-style:none none none solid;
 border-width:1px;
 border-color:#9b30cf;
-background-color:#fddfff;}
-  UL UL UL UL {list-style-type:square;border-style:none;}
-  UL UL UL UL UL {list-style-type:disc;
+background-color:#fddfff;
+}
+
+UL UL UL UL {
+list-style-type:square;
+border-style:none;
+}
+
+UL UL UL UL UL {
+list-style-type:disc;
 border-style:none none none solid;
 border-width:1px;
 border-color:#d8ca00;
-background-color:#fffabf;}
-  H1 {font-size: 24pt;
+background-color:#fffabf;
+}
+
+H1 {
+font-size: 24pt;
 color:#dfdff0;
 text-align:center;
 border-style:solid;
@@ -130,14 +164,52 @@ margin-left:0px;
 margin-right:0px;
 margin-top:0px;
 }
-  A  {color:DarkViolet;text-decoration: none}
-  A:hover {color: Violet;background-color: DarkViolet;text-decoration: none;}
-  A.nohover:hover {background-color: transparent;text-decoration: none;
-  	color: transparent;}
-  A.normal  {color:#2f2fc0;text-decoration: none}
-  A.normal:hover {color: #dfdff0;background-color: #2f2fc0;text-decoration: none;}
-  A.normal.nohover:hover {background-color: transparent;text-decoration: none;
-  	color: transparent;}
+
+A  {
+color:DarkViolet;
+text-decoration: none;
+}
+
+A:hover {
+color: Violet;
+background-color: DarkViolet;
+text-decoration: none;
+}
+
+A.nohover:hover {
+background-color: transparent;
+text-decoration: none;
+color: transparent;
+}
+
+A.normal  {
+color:#2f2fc0;
+text-decoration: none
+}
+
+A.normal:hover {
+color: #dfdff0;
+background-color: #2f2fc0;
+text-decoration: none;
+}
+
+A.normal.nohover:hover {
+background-color: transparent;
+text-decoration: none;
+color: transparent;
+}
+
+UL DL DD {
+background-color:#fffabf;
+}
+
+UL DL DT {
+font-family:courier,fixed;
+font-size:14pt;
+font-weight:bold;
+margin-left:20px;
+}
+
   </style>
   </head>
   <body>
@@ -276,6 +348,94 @@ non alphanumeric characters:
     are subtables of <B>relation</B> and theys fields are listed here):
     <xsl:apply-templates select="relation"/>
     </P>
+   <P>
+   In the samples/ directory there are some usefull example of configuration
+   files, and a support file you can cut&amp;paste in your configuration file
+   to make your life easyer. The documentation of functions.lua follows 
+   (remember that you can use these support functions also adding a line like:
+   </P>
+   <PRE>dofile("/usr/share/doc/ebiff/samples/functions.lua")</PRE><P>at the 
+   beginning of your configuration file, the path used in the example is 
+   peculiar to the debian system).<BR/>
+   </P>
+   <P>
+   These are the functions defined in <B>functions.lua</B>:
+   </P>
+   <UL>
+   	<LI>
+	Search functions:
+	<DL>
+		<DT>find_maildir(dir)</DT>
+		<DD>
+			Gets the maildirs that are subdirectories
+			of dir and returns a table containing them.
+			You can easily write an always-up-to-date config
+			file making an authomatic search of  
+			directories. For example
+			<PRE>mailboxes=find_maildir(os.getenv("HOME").."/Mail")</PRE>
+			finds the maildirs that are inside <TT>~/Mail/</TT>,
+			and puts the list of theyr path in <TT>mailboxes</TT>.
+		</DD>
+		<DT>find_maildir_r(dir)</DT>
+		<DD>
+			Works as the previous one, but runs recursively into 
+			subdirectories.
+		</DD>
+		<DT>find_mbox(dir)</DT>
+		<DD>
+			Gets the mboxes that are subdirectories
+			of dir and returns a table containing them.
+			You can easily write an always-up-to-date config
+			file making an authomatic search of 
+			directories. For example
+			<PRE>mailboxes=find_mabox(os.getenv("HOME").."/Mail")</PRE>
+			finds the mboxes that are inside <TT>~/Mail/</TT>,
+			and puts the list of theyr path in <TT>mailboxes</TT>.
+			Remember that is up to you to specify a directory 
+			containing only subdirectories or mbox files. 
+			All files beginning with <TT>.</TT> will be skipped.
+		</DD>
+		<DT>find_mbox_r(dir)</DT>
+		<DD>
+			Works as the previous one, but runs recursively into 
+			subdirectories.
+		</DD>
+	</DL>
+	</LI>
+	<LI>
+	Creation functions:
+	<DL>
+		<DT>maildir2mailbox(s,transtbl,cmdgen,interval)</DT>
+		<DD>
+		
+		</DD>
+		<DT>maildirs2mailboxes(t,transtbl,cmdgen,interval)</DT>
+		<DD>
+		
+		</DD>
+		<DT>mbox2mailbox(s,newonly,transtbl,cmdgen,interval)</DT>
+		<DD>
+		
+		</DD>
+		<DT>mboxes2mailboxes(t,transtbl,cmdgen,newonly,interval)</DT>
+		<DD>
+		
+		</DD>
+	</DL>
+
+	</LI>
+	<LI>
+	Selection functions:
+	<DL>
+		<DT>selectmailbox(t,name)</DT>
+		<DD>
+
+		</DD>
+	</DL>
+
+	</LI>
+
+   </UL>
     <HR/>
     </body>
   </html>

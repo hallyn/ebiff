@@ -59,7 +59,15 @@
 -- 
 -- Example: find_maildir(os.getenv("HOME").."/Mail")
 -- 
-function find_maildir(dir,notdeep)
+function find_maildir(dir)
+	return find_maildir_real(dir,true)
+end
+
+function find_maildir_r(dir)
+	return find_maildir_real(dir,false)
+end	
+
+function find_maildir_real(dir,notdeep)
 	
 	local function find_maildir_aux(dir,rc)
 		--print("Examining "..dir)
@@ -103,6 +111,14 @@ end
 -- Example: find_mbox(os.getenv("HOME").."/Mail")
 -- 
 function find_mbox(dir)
+	return find_mbox_real(dir,true)
+end
+
+function find_mbox_r(dir)
+	return find_mbox_real(dir,false)
+end
+
+function find_mbox_real(dir,notdeep)
 	
 	local function find_maildir_aux(dir,rc)
 		--print("Examining "..dir)
@@ -116,13 +132,14 @@ function find_mbox(dir)
 			local _,_,x = string.find(d,"^(%.)")
 			if x == nil and posix.dir(dir.."/"..d) == nil then
 				table.insert(rc,dir.."/"..d)
+			elseif not notdeep then
+				find_maildir_aux(dir.."/"..d,rc)
 			end
 		end
 		return rc
 	end
 
 	return find_maildir_aux(dir,{})
-
 end
 
 -- -------------------------------------------------------------------------- --
@@ -300,7 +317,7 @@ end
 -- 		function(s) return "xterm -e mutt -f "..s.."&" end)
 -- 
 --
-function mboxs2mailboxes(t,transtbl,cmdgen,newonly,interval)
+function mboxes2mailboxes(t,transtbl,cmdgen,newonly,interval)
 	local rc = {}
 
 	if t == nil then

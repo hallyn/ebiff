@@ -1,8 +1,4 @@
 - better gtk preview window dimension
 - better locking system for mbox (see mutt sources)
-- write a README
 - check license of the fat penguin for a SDLvideo plugin
-- write a Changelog
-- build system
--------------
  
