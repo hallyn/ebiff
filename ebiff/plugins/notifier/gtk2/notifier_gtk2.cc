@@ -22,6 +22,9 @@
 GThread* NotifierGtk2::refresher = NULL;
 queue<NotifierGtk2::UInfo*> NotifierGtk2::requests;
 GStaticMutex NotifierGtk2::requests_mutex = G_STATIC_MUTEX_INIT;
+int NotifierGtk2::argn=1;
+const char* NotifierGtk2::v[] = {"ebiff",NULL};
+char** NotifierGtk2::argv=(char**)v;
 
 /*******************************************************************************
  *
@@ -84,10 +87,6 @@ g_static_mutex_unlock(&requests_mutex);
  */
 NotifierGtk2::NotifierGtk2()
 {
-int argn=1;
-char* v[1] = {"ebiff"};
-char** argv=(char**)v;
-
 gtk_init_check(&argn,&argv);
 status.window = NULL;
 status.showall = false;

@@ -41,6 +41,7 @@ protected:
 	static void *manager_f(void*);
 
 	string file;
+	string file_empty;
 	
 public:
 	void SetString(string name, string value) throw(NotifierException);

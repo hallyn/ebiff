@@ -103,6 +103,10 @@ protected:
 	static queue<UInfo*> requests;
 	static GThread* refresher;
 	static GStaticMutex requests_mutex;
+	static int argn;
+	static const char* v[];
+	static char** argv;
+
 	
 	// functions for the thread
 	static gpointer thread(gpointer data);

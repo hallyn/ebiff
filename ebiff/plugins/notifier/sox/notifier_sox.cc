@@ -32,6 +32,9 @@ void NotifierSox::SetString(string name, string value) throw(NotifierException)
 {
 if(name == "file")
 	file = value;
+if(name == "empty")
+	file_empty = value;
+
 }
 /*******************************************************************************
  *
@@ -52,7 +55,10 @@ void NotifierSox::SetNumber(string name, double value) throw(NotifierException)
 void NotifierSox::Notify(ReducedMailbox* m)
 {
 pthread_mutex_lock(&files_mutex);
-files.push(file);
+if( m->CountNew() > 0)
+	files.push(file);
+else if( file_empty != "")
+	files.push(file_empty);
 pthread_mutex_unlock(&files_mutex);
 
 }

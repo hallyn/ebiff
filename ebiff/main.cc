@@ -86,7 +86,7 @@ while ((res=getopt_long(argc,argv,"V",opts,NULL))!= -1)
 		exit(1);
 		}
 	}
-	
+
 // check for the config file
 const char* home = getenv("HOME");
 char path[255];

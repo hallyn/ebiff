@@ -179,6 +179,8 @@ while (lua_next(L,-2) != 0)
 					break;
 
 				n->SetString("file",SOX_CAST(&b).file);
+				n->SetString("file_empty",
+					SOX_CAST(&b).file_empty);
 				
 				}break;
 			case NOTIFIER_DRIVER_CONTENT_FLITE: {
