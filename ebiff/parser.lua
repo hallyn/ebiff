@@ -51,7 +51,7 @@ function generate_preamble()
 	s = s .. "#define ERR_PRINT(s...) fprintf(stderr,s)\n"
 	s = s .. "#define MALLOC_CHECK(p) {\\\n"
 	s = s .. "\tif((p)==NULL) {\\\n"
-	s = s .. "\t\tERR_PRINT(\"%s:%s: NULL assertion failed\\n\",\\\n"
+	s = s .. "\t\tERR_PRINT(\"%s:%d: NULL assertion failed\\n\",\\\n"
 	s = s .. "\t\t\t__FILE__,__LINE__);\\\n"
 	s = s .. "\t\treturn 1;\\\n"
 	s = s .. "\t}\\\n"

@@ -63,4 +63,3 @@ Provides: ebiff-mailbox
 Description: ebiff's maildir plugin
  This plugin allows ebiff to access maildir mailboxes
 
-

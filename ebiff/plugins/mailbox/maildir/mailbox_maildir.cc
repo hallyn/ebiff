@@ -22,8 +22,12 @@
 #include <dirent.h>
 #include <regex.h>
 #include <string.h>
+#include <errno.h>
+#include <stdio.h>
+
 
 #include "mailbox_maildir.h"
+
 
 #define MAX(a,b)	(((a)<(b))?(b):(a)) 
 #define MIN(a,b)	(((a)<(b))?(a):(b)) 

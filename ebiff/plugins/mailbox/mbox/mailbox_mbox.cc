@@ -22,6 +22,8 @@
 #include <dirent.h>
 #include <regex.h>
 #include <string.h>
+#include <stdio.h>
+#include <errno.h>
 
 #include "mailbox_mbox.h"
 
@@ -234,7 +236,7 @@ while(!feof(f))
 	if(check_resumed)
 		{
 		//fprintf(stderr,"checking %s with %s\n",end_string.c_str(),l);
-		if ( end_string != "" and
+		if ( end_string != "" &&
 			end_string != l )
 			{
 			//we have to rewind the file and start again

@@ -48,7 +48,7 @@ tgz: distclean
 	rm $$TMP
 
 deb: distclean
-	dpkg-buildpackage -rfakeroot -us -uc
+	dpkg-buildpackage -rfakeroot -us -uc -d
 	
 release: 
 	@echo 

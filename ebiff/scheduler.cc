@@ -18,6 +18,8 @@
 
 #include <stdio.h>
 
+#include <algorithm>
+
 Scheduler::Scheduler(list<Relation*> *l) throw(Failure):
 queue(l)
 {

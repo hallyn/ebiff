@@ -15,6 +15,7 @@
 
 
 #include <dlfcn.h>
+#include <stdio.h>
 
 #include "pluginregistry.h"
 #include "config.h"
