@@ -170,121 +170,107 @@ Buff b;
 char line[1000];
 string file;
 
-while(1)
+while ( n-> ready < 3) sleep(1);
+
+s = socket(PF_INET, SOCK_STREAM, 0);
+
+if(s == -1)
 	{
-	sleep(1);
-	if( n->ready == 3)
-		{
-		cout << "Ready!!\n";
-		
-		if (s == -1)
-			{
-			s = socket(PF_INET, SOCK_STREAM, 0);
-			
-			if(s == -1)
-				{
-				fprintf(stderr,"Unable to create the socket\n");
-				exit(1);
-				}
-			
-			struct addrinfo hint, *addr;
-
-			memset(&hint, 0, sizeof(hint));
-			hint.ai_family = PF_INET;
-			rc = getaddrinfo(n->host.c_str(), NULL, &hint, &addr);
-
-			if(rc != 0)
-				{
-				fprintf(stderr,"Unable to get addr info\n");
-				close(s);
-				s = -1;
-				continue;
-				}
-			
-			memset(&ad, 0, sizeof(ad));
-			ad.sin_family = AF_INET;
-			ad.sin_port = htons(n->port);
-			ad.sin_addr = ((struct sockaddr_in *)(addr->ai_addr))
-					->sin_addr;
-
-			freeaddrinfo(addr);
-			
-			rc = connect(s,(struct sockaddr *)&ad,adl);
-			if(rc == -1)
-				{
-				fprintf(stderr,"Unable to connect "
-					"host='%s'='%s' port='%d' : ",
-					n->host.c_str(),
-					inet_ntoa(ad.sin_addr),
-					n->port);
-				char buff[100];
-				fprintf(stderr,"%s\n",
-					strerror_r(errno, buff,100));
-				close(s);
-				s = -1;
-				continue;
-				}
-
-			/* handshake */
-
-			rc = readl(line,1000,s,&b);
-
-			if(rc <= 0)
-				{
-				fprintf(stderr,"Lost connection\n");	
-				close(s);
-				s = -1;
-				b.clear();
-				continue;
-				}
-			
-			int version = atoi(line);
-
-			if(version != VERSION)
-				{
-				fprintf(stderr,"Wrong version %d != %d\n",
-					version,VERSION);	
-				close(s);
-				s = -1;
-				b.clear();
-				continue;
-				}
-				
-			rc = sendl(n->pass.c_str(),n->pass.length(),s);
-
-			//FIX
-			
-			}
-
-		cout << "Connected!!\n";
-
-		do 
-			{
-			rc = readl(line,1000,s,&b);
-
-			if(rc <= 0)
-				{
-				fprintf(stderr,"Lost connection\n");	
-				close(s);
-				s = -1;
-				b.clear();
-				exit(1);
-				}
-
-			file = file + line;
-			
-			}
-		while( strcmp(line,"\r\n"));
-
-		pthread_mutex_lock(q_mutex);
-		q->push(file);
-		pthread_mutex_unlock(q_mutex);
-
-		}
-
+	fprintf(stderr,"Unable to create the socket\n");
+	exit(1);
 	}
 
+struct addrinfo hint, *addr;
+
+memset(&hint, 0, sizeof(hint));
+hint.ai_family = PF_INET;
+rc = getaddrinfo(n->host.c_str(), NULL, &hint, &addr);
+
+if(rc != 0)
+	{
+	fprintf(stderr,"Unable to get addr info\n");
+	close(s);
+	s = -1;
+	continue;
+	}
+
+memset(&ad, 0, sizeof(ad));
+ad.sin_family = AF_INET;
+ad.sin_port = htons(n->port);
+ad.sin_addr = ((struct sockaddr_in *)(addr->ai_addr))
+		->sin_addr;
+
+freeaddrinfo(addr);
+
+rc = connect(s,(struct sockaddr *)&ad,adl);
+if(rc == -1)
+	{
+	fprintf(stderr,"Unable to connect "
+		"host='%s'='%s' port='%d' : ",
+		n->host.c_str(),
+		inet_ntoa(ad.sin_addr),
+		n->port);
+	char buff[100];
+	fprintf(stderr,"%s\n",
+		strerror_r(errno, buff,100));
+	close(s);
+	s = -1;
+	continue;
+	}
+
+/* handshake */
+
+rc = readl(line,1000,s,&b);
+
+if(rc <= 0)
+	{
+	fprintf(stderr,"Lost connection\n");	
+	close(s);
+	s = -1;
+	b.clear();
+	continue;
+	}
+
+int version = atoi(line);
+
+if(version != VERSION)
+	{
+	fprintf(stderr,"Wrong version %d != %d\n",
+		version,VERSION);	
+	close(s);
+	s = -1;
+	b.clear();
+	continue;
+	}
+	
+rc = sendl(n->pass.c_str(),n->pass.length(),s);
+
+
+//cout << "Connected!!\n";
+
+while(1) {
+	do {
+		rc = readl(line,1000,s,&b);
+
+		if(rc <= 0)
+			{
+			fprintf(stderr,"Lost connection\n");	
+			close(s);
+			s = -1;
+			b.clear();
+			exit(1);
+			}
+
+		file = file + line;
+		
+	} while( strcmp(line,"\r\n"));
+
+	pthread_mutex_lock(q_mutex);
+	q->push(file);
+	pthread_mutex_unlock(q_mutex);
 }
+}
+
 /*******************************************************************************
  * ~MailboxNetin
  *

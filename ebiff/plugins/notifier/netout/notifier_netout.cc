@@ -220,7 +220,7 @@ if(rc != 0)
 	exit(1);
 	}
 
-cout << "We are ready!\n";
+//cout << "We are ready!\n";
 
 rc = accept(s,NULL,NULL);
 
