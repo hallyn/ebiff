@@ -33,6 +33,9 @@ extern "C" {
 
 #include "parser.c"
 
+#define _RELEASE_
+
+#ifndef _RELEASE_
 void lua_printstack(lua_State* s)	
 {
 int i;
@@ -47,6 +50,14 @@ for(i=lua_gettop(s) ; i > 0 ; i-- )
 	}
 printf("LUA_STACK( 0) : --bottom--\n");
 }
+#else
+void lua_printstack(lua_State* s)	
+{
+int i=lua_gettop(s);
+if(lua_isstring(s,i))
+	printf("ERROR: \"%s\"\n",lua_tostring(s,i));
+}
+#endif
 
 #define lua_emptystack(s) {\
 	while(lua_gettop(s) != 0)\
